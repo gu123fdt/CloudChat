@@ -4,13 +4,13 @@ import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/utils/date_time_extension.dart';
-import 'package:fluffychat/utils/fluffy_share.dart';
-import 'package:fluffychat/utils/localized_exception_extension.dart';
-import 'package:fluffychat/utils/url_launcher.dart';
-import 'package:fluffychat/widgets/avatar.dart';
-import 'package:fluffychat/widgets/presence_builder.dart';
+import 'package:cloudchat/config/app_config.dart';
+import 'package:cloudchat/utils/date_time_extension.dart';
+import 'package:cloudchat/utils/cloud_share.dart';
+import 'package:cloudchat/utils/localized_exception_extension.dart';
+import 'package:cloudchat/utils/url_launcher.dart';
+import 'package:cloudchat/widgets/avatar.dart';
+import 'package:cloudchat/widgets/presence_builder.dart';
 import '../../widgets/matrix.dart';
 import 'user_bottom_sheet.dart';
 
@@ -127,7 +127,7 @@ class UserBottomSheetView extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           TextButton.icon(
-                            onPressed: () => FluffyShare.share(
+                            onPressed: () => CloudShare.share(
                               userId,
                               context,
                               copyOnly: true,

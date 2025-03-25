@@ -60,3 +60,7 @@ ios/Runner.ipa
 /macos/out
 .vs
 olm
+.github
+.vscode
+setup_windows/Output
+logs.txt

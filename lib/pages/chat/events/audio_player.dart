@@ -10,11 +10,11 @@ import 'package:matrix/matrix.dart';
 import 'package:opus_caf_converter_dart/opus_caf_converter_dart.dart';
 import 'package:path_provider/path_provider.dart';
 
-import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/config/themes.dart';
-import 'package:fluffychat/utils/error_reporter.dart';
-import 'package:fluffychat/utils/localized_exception_extension.dart';
-import 'package:fluffychat/utils/url_launcher.dart';
+import 'package:cloudchat/config/app_config.dart';
+import 'package:cloudchat/config/themes.dart';
+import 'package:cloudchat/utils/error_reporter.dart';
+import 'package:cloudchat/utils/localized_exception_extension.dart';
+import 'package:cloudchat/utils/url_launcher.dart';
 import '../../../utils/matrix_sdk_extensions/event_extension.dart';
 
 class AudioPlayerWidget extends StatefulWidget {
@@ -80,14 +80,18 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
     if (status != AudioPlayerStatus.notDownloaded) return;
     setState(() => status = AudioPlayerStatus.downloading);
     try {
+      final tempDir = await getTemporaryDirectory();
+      final fileName = Uri.encodeComponent(
+        widget.event.attachmentOrThumbnailMxcUrl()!.pathSegments.last,
+      );
       final matrixFile = await widget.event.downloadAndDecryptAttachment();
-      File? file;
+      File? file = File('${tempDir.path}/${fileName}_${matrixFile.name}');
 
-      if (!kIsWeb) {
-        final tempDir = await getTemporaryDirectory();
-        final fileName = Uri.encodeComponent(
-          widget.event.attachmentOrThumbnailMxcUrl()!.pathSegments.last,
-        );
+      if (!kIsWeb && file.existsSync() == true) {
+        await file.delete();
+      }
+
+      if (!kIsWeb && file.existsSync() == false) {
         file = File('${tempDir.path}/${fileName}_${matrixFile.name}');
 
         await file.writeAsBytes(matrixFile.bytes);
@@ -162,7 +166,7 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
     } else {
       await audioPlayer.setAudioSource(MatrixFileAudioSource(matrixFile!));
     }
-    audioPlayer.play().onError(
+    await audioPlayer.play().onError(
           ErrorReporter(context, 'Unable to play audio message')
               .onErrorCallback,
         );
@@ -258,7 +262,7 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
         children: [
           ConstrainedBox(
             constraints:
-                const BoxConstraints(maxWidth: FluffyThemes.columnWidth),
+                const BoxConstraints(maxWidth: CloudThemes.columnWidth),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[

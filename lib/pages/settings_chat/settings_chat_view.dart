@@ -1,15 +1,17 @@
+import 'package:launch_at_startup/launch_at_startup.dart';
+import 'package:cloudchat/widgets/settings_select_record_device_list_tile.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/config/setting_keys.dart';
-import 'package:fluffychat/utils/platform_infos.dart';
-import 'package:fluffychat/utils/voip/callkeep_manager.dart';
-import 'package:fluffychat/widgets/layouts/max_width_body.dart';
-import 'package:fluffychat/widgets/matrix.dart';
-import 'package:fluffychat/widgets/settings_switch_list_tile.dart';
+import 'package:cloudchat/config/app_config.dart';
+import 'package:cloudchat/config/setting_keys.dart';
+import 'package:cloudchat/utils/platform_infos.dart';
+import 'package:cloudchat/utils/voip/callkeep_manager.dart';
+import 'package:cloudchat/widgets/layouts/max_width_body.dart';
+import 'package:cloudchat/widgets/matrix.dart';
+import 'package:cloudchat/widgets/settings_switch_list_tile.dart';
 import 'settings_chat.dart';
 
 class SettingsChatView extends StatelessWidget {
@@ -26,7 +28,7 @@ class SettingsChatView extends StatelessWidget {
         iconColor: theme.textTheme.bodyLarge!.color,
         child: MaxWidthBody(
           child: Column(
-            children: [
+            children: <Widget>[
               SettingsSwitchListTile.adaptive(
                 title: L10n.of(context).formattedMessages,
                 subtitle: L10n.of(context).formattedMessagesDescription,
@@ -93,6 +95,36 @@ class SettingsChatView extends StatelessWidget {
                 ),
               ),
               Divider(color: theme.dividerColor),
+              if (!PlatformInfos.isMobile && !PlatformInfos.isWeb) ...[
+                SettingsSwitchListTile.adaptive(
+                  title: L10n.of(context).autoStart,
+                  onChanged: (b) async {
+                    if (b) {
+                      await launchAtStartup.enable();
+                    } else {
+                      await launchAtStartup.disable();
+                    }
+
+                    AppConfig.autoStart = await launchAtStartup.isEnabled();
+                  },
+                  storeKey: SettingKeys.autoStart,
+                  defaultValue: AppConfig.autoStart,
+                ),
+                Divider(color: theme.dividerColor),
+              ],
+              if (!PlatformInfos.isMobile) ...[
+                ListTile(
+                  title: Text(
+                    L10n.of(context).recording,
+                    style: TextStyle(
+                      color: theme.colorScheme.secondary,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const SettingsSelectRecordDeviceListTile(),
+                Divider(color: theme.dividerColor),
+              ],
               ListTile(
                 title: Text(
                   L10n.of(context).calls,

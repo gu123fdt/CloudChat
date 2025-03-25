@@ -1,7 +1,7 @@
 /*
  *   Famedly
  *   Copyright (C) 2020, 2021 Famedly GmbH
- *   Copyright (C) 2021 Fluffychat
+ *   Copyright (C) 2021 Cloudchat
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU Affero General Public License as
@@ -32,14 +32,14 @@ import 'package:matrix/matrix.dart';
 import 'package:unifiedpush/unifiedpush.dart';
 import 'package:unifiedpush_ui/unifiedpush_ui.dart';
 
-import 'package:fluffychat/utils/push_helper.dart';
-import 'package:fluffychat/widgets/fluffy_chat_app.dart';
+import 'package:cloudchat/utils/push_helper.dart';
+import 'package:cloudchat/widgets/cloud_chat_app.dart';
 import '../config/app_config.dart';
 import '../config/setting_keys.dart';
 import '../widgets/matrix.dart';
 import 'platform_infos.dart';
 
-//import 'package:fcm_shared_isolate/fcm_shared_isolate.dart';
+import 'package:fcm_shared_isolate/fcm_shared_isolate.dart';
 
 class NoTokenException implements Exception {
   String get cause => 'Cannot get firebase token';
@@ -64,7 +64,7 @@ class BackgroundPush {
 
   final pendingTests = <String, Completer<void>>{};
 
-  final dynamic firebase = null; //FcmSharedIsolate();
+  final dynamic firebase = FcmSharedIsolate(); //FcmSharedIsolate();
 
   DateTime? lastReceivedPush;
 
@@ -142,11 +142,19 @@ class BackgroundPush {
   }
 
   Future<void> setupPusher({
-    String? gatewayUrl,
     String? token,
     Set<String?>? oldTokens,
     bool useDeviceSpecificAppId = false,
   }) async {
+    String gatewayUrl = (matrix!.client.homeserver!.origin.split('.')
+              ..[0] += '-push')
+            .join('.') +
+        "/_matrix/push/v1/notify";
+
+    if (gatewayUrl.contains("https")) {
+      gatewayUrl = gatewayUrl.replaceFirst("https", "http");
+    }
+
     if (PlatformInfos.isIOS) {
       await firebase?.requestPermission();
     } else if (PlatformInfos.isAndroid) {
@@ -314,7 +322,6 @@ class BackgroundPush {
       }
     }
     await setupPusher(
-      gatewayUrl: AppConfig.pushNotificationsGatewayUrl,
       token: _fcmToken,
     );
   }
@@ -333,7 +340,7 @@ class BackgroundPush {
             .waitForRoomInSync(roomId)
             .timeout(const Duration(seconds: 30));
       }
-      FluffyChatApp.router.go(
+      CloudChatApp.router.go(
         client.getRoomById(roomId)?.membership == Membership.invite
             ? '/rooms'
             : '/rooms/$roomId',
@@ -384,7 +391,6 @@ class BackgroundPush {
       oldTokens.add(fcmToken);
     } catch (_) {}
     await setupPusher(
-      gatewayUrl: endpoint,
       token: newEndpoint,
       oldTokens: oldTokens,
       useDeviceSpecificAppId: true,

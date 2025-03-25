@@ -13,14 +13,14 @@ import 'package:matrix/matrix.dart';
 import 'package:universal_html/html.dart' as html;
 import 'package:url_launcher/url_launcher_string.dart';
 
-import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/pages/homeserver_picker/homeserver_picker_view.dart';
-import 'package:fluffychat/utils/file_selector.dart';
-import 'package:fluffychat/utils/platform_infos.dart';
-import 'package:fluffychat/widgets/matrix.dart';
+import 'package:cloudchat/config/app_config.dart';
+import 'package:cloudchat/pages/homeserver_picker/homeserver_picker_view.dart';
+import 'package:cloudchat/utils/file_selector.dart';
+import 'package:cloudchat/utils/platform_infos.dart';
+import 'package:cloudchat/widgets/matrix.dart';
 import '../../utils/localized_exception_extension.dart';
 
-import 'package:fluffychat/utils/tor_stub.dart'
+import 'package:cloudchat/utils/tor_stub.dart'
     if (dart.library.html) 'package:tor_detector_web/tor_detector_web.dart';
 
 class HomeserverPicker extends StatefulWidget {
@@ -31,7 +31,8 @@ class HomeserverPicker extends StatefulWidget {
   HomeserverPickerController createState() => HomeserverPickerController();
 }
 
-class HomeserverPickerController extends State<HomeserverPicker> {
+class HomeserverPickerController extends State<HomeserverPicker>
+    with WidgetsBindingObserver {
   bool isLoading = false;
   bool isLoggingIn = false;
 
@@ -179,6 +180,12 @@ class HomeserverPickerController extends State<HomeserverPicker> {
       isLoading = isLoggingIn = true;
     });
     try {
+      final oldHomeserver =
+          await Matrix.of(context).getLoginClient().homeserver;
+      try {
+        await Matrix.of(context).getLoginClient().login(LoginType.mLoginToken);
+      } catch (_) {}
+      Matrix.of(context).getLoginClient().homeserver = oldHomeserver;
       await Matrix.of(context).getLoginClient().login(
             LoginType.mLoginToken,
             token: token,
@@ -212,6 +219,59 @@ class HomeserverPickerController extends State<HomeserverPicker> {
     _checkTorBrowser();
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback(checkHomeserverAction);
+    WidgetsBinding.instance.addObserver(this);
+    _autoLoginAccount();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _autoLoginAccount();
+    }
+  }
+
+  void _autoLoginAccount() async {
+    if (Matrix.of(context).isAutoLoginAccountDetect()) {
+      Matrix.of(context).getLoginClient().homeserver =
+          Uri.parse(Matrix.of(context).store.getString('autoLoginHomeserver')!);
+
+      final token = Matrix.of(context).store.getString('autoLoginToken');
+      if (token?.isEmpty ?? false) return;
+
+      setState(() {
+        error = null;
+        isLoading = isLoggingIn = true;
+      });
+      try {
+        final oldHomeserver =
+            await Matrix.of(context).getLoginClient().homeserver;
+        try {
+          await Matrix.of(context)
+              .getLoginClient()
+              .login(LoginType.mLoginToken);
+        } catch (e) {}
+        Matrix.of(context).getLoginClient().homeserver = oldHomeserver;
+
+        await Matrix.of(context).getLoginClient().login(
+              LoginType.mLoginToken,
+              token: token,
+              initialDeviceDisplayName: PlatformInfos.clientName,
+            );
+      } catch (e) {
+        setState(() {
+          error = e.toString();
+        });
+      } finally {
+        if (mounted) {
+          setState(() {
+            isLoading = isLoggingIn = false;
+          });
+        }
+
+        Matrix.of(context).store.remove('autoLoginHomeserver');
+        Matrix.of(context).store.remove('autoLoginToken');
+      }
+    }
   }
 
   @override

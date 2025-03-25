@@ -10,9 +10,9 @@ import 'package:html/dom.dart' as dom;
 import 'package:linkify/linkify.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/widgets/avatar.dart';
-import 'package:fluffychat/widgets/mxc_image.dart';
+import 'package:cloudchat/config/app_config.dart';
+import 'package:cloudchat/widgets/avatar.dart';
+import 'package:cloudchat/widgets/mxc_image.dart';
 import '../../../utils/url_launcher.dart';
 
 class HtmlMessage extends StatelessWidget {
@@ -136,6 +136,7 @@ class HtmlMessage extends StatelessWidget {
         MatrixMathExtension(
           style: TextStyle(fontSize: fontSize, color: textColor),
         ),
+        OrderedListExtension(fontSize: fontSize, textColor: textColor),
         const TableHtmlExtension(),
         SpoilerExtension(textColor: textColor),
         const ImageExtension(),
@@ -203,7 +204,7 @@ class HtmlMessage extends StatelessWidget {
     'ruby',
     'rp',
     'rt',
-    // Workaround for https://github.com/krille-chan/fluffychat/issues/507
+    // Workaround for https://github.com/exemple/cloudchat/issues/507
     ...fallbackTextTags,
   };
 }
@@ -529,6 +530,34 @@ class MatrixPill extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class OrderedListExtension extends HtmlExtension {
+  final double fontSize;
+  final Color textColor;
+
+  OrderedListExtension({required this.fontSize, required this.textColor});
+
+  @override
+  Set<String> get supportedTags => {'ol'};
+
+  @override
+  InlineSpan build(ExtensionContext context) {
+    final start = int.tryParse(context.attributes['start'] ?? '1') ?? 1;
+    var counter = start;
+
+    final children = context.element?.children.map((li) {
+      return '${counter++}. ${li.text}';
+    }).join('\n');
+
+    return TextSpan(
+      text: children,
+      style: TextStyle(
+        fontSize: fontSize,
+        color: textColor,
       ),
     );
   }

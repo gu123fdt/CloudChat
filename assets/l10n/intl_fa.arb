@@ -1002,8 +1002,8 @@
     "type": "text",
     "placeholders": {}
   },
-  "fluffychat": "فلافی‌چت",
-  "@fluffychat": {
+  "cloudchat": "فلافی‌چت",
+  "@cloudchat": {
     "type": "text",
     "placeholders": {}
   },
@@ -1091,8 +1091,8 @@
     "type": "text",
     "placeholders": {}
   },
-  "newMessageInFluffyChat": "💬 پیام جدید در فلافی‌چت",
-  "@newMessageInFluffyChat": {
+  "newMessageInCloudChat": "💬 پیام جدید در فلافی‌چت",
+  "@newMessageInCloudChat": {
     "type": "text",
     "placeholders": {}
   },
@@ -1488,7 +1488,7 @@
   },
   "serverRequiresEmail": "برای ثبت‌نام، این سرور باید آدرس ایمیل شما را تایید کند.",
   "@serverRequiresEmail": {},
-  "inviteText": "{username} شما را به فلافی‌چت دعوت کرد.\n۱. به fluffychat.im مراجعه کرده و کاره را نصب کنید\n۲. ثبت نام کنید یا وارد شوید.\n۳. لینک دعوت را باز کنید:\n {link}",
+  "inviteText": "{username} شما را به فلافی‌چت دعوت کرد.\n۱. به cloudchat.im مراجعه کرده و کاره را نصب کنید\n۲. ثبت نام کنید یا وارد شوید.\n۳. لینک دعوت را باز کنید:\n {link}",
   "@inviteText": {
     "type": "text",
     "placeholders": {

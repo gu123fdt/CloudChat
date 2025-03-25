@@ -3,13 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/config/setting_keys.dart';
-import 'package:fluffychat/utils/beautify_string_extension.dart';
-import 'package:fluffychat/utils/platform_infos.dart';
-import 'package:fluffychat/widgets/layouts/max_width_body.dart';
-import 'package:fluffychat/widgets/matrix.dart';
-import 'package:fluffychat/widgets/settings_switch_list_tile.dart';
+import 'package:cloudchat/config/app_config.dart';
+import 'package:cloudchat/config/setting_keys.dart';
+import 'package:cloudchat/utils/app_locker/app_locker.dart';
+import 'package:cloudchat/utils/beautify_string_extension.dart';
+import 'package:cloudchat/utils/platform_infos.dart';
+import 'package:cloudchat/widgets/layouts/max_width_body.dart';
+import 'package:cloudchat/widgets/matrix.dart';
+import 'package:cloudchat/widgets/settings_switch_list_tile.dart';
 import 'settings_security.dart';
 
 class SettingsSecurityView extends StatelessWidget {
@@ -79,12 +80,20 @@ class SettingsSecurityView extends StatelessWidget {
                         context.go('/rooms/settings/security/ignorelist'),
                   ),
                   if (Matrix.of(context).client.encryption != null) ...{
-                    if (PlatformInfos.isMobile)
+                    if (!PlatformInfos.isWeb)
                       ListTile(
                         trailing: const Icon(Icons.chevron_right_outlined),
                         title: Text(L10n.of(context).appLock),
                         subtitle: Text(L10n.of(context).appLockDescription),
                         onTap: controller.setAppLockAction,
+                      ),
+                    if (AppLocker.getLockMethod() != null)
+                      ListTile(
+                        trailing: const Icon(Icons.chevron_right_outlined),
+                        title: Text(L10n.of(context).appLockTimeout),
+                        subtitle:
+                            Text(L10n.of(context).appLockTimeoutDescription),
+                        onTap: controller.setAppLockTimeoutAction,
                       ),
                   },
                   Divider(color: theme.dividerColor),

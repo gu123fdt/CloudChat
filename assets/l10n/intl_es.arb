@@ -542,8 +542,8 @@
     "type": "text",
     "placeholders": {}
   },
-  "fluffychat": "FluffyChat",
-  "@fluffychat": {
+  "cloudchat": "CloudChat",
+  "@cloudchat": {
     "type": "text",
     "placeholders": {}
   },
@@ -662,7 +662,7 @@
     "type": "text",
     "placeholders": {}
   },
-  "inviteText": "{username} te invitó a FluffyChat.\n1.Visita fluffychat.im e instala la app\n2. Regístrate o inicia sesión\n3. Abre el enlace de invitación:\n{link}",
+  "inviteText": "{username} te invitó a CloudChat.\n1.Visita cloudchat.im e instala la app\n2. Regístrate o inicia sesión\n3. Abre el enlace de invitación:\n{link}",
   "@inviteText": {
     "type": "text",
     "placeholders": {
@@ -789,8 +789,8 @@
     "type": "text",
     "placeholders": {}
   },
-  "newMessageInFluffyChat": "Nuevo mensaje en FluffyChat",
-  "@newMessageInFluffyChat": {
+  "newMessageInCloudChat": "Nuevo mensaje en CloudChat",
+  "@newMessageInCloudChat": {
     "type": "text",
     "placeholders": {}
   },
@@ -819,7 +819,7 @@
     "type": "text",
     "placeholders": {}
   },
-  "noGoogleServicesWarning": "Parece que no tienes servicios de Google en tu teléfono. ¡Esa es una buena decisión para tu privacidad! Para recibir notificaciones instantáneas en FluffyChat, recomendamos usar microG: https://microg.org/",
+  "noGoogleServicesWarning": "Parece que no tienes servicios de Google en tu teléfono. ¡Esa es una buena decisión para tu privacidad! Para recibir notificaciones instantáneas en CloudChat, recomendamos usar microG: https://microg.org/",
   "@noGoogleServicesWarning": {
     "type": "text",
     "placeholders": {}
@@ -1185,7 +1185,7 @@
     "type": "text",
     "placeholders": {}
   },
-  "title": "FluffyChat",
+  "title": "CloudChat",
   "@title": {
     "description": "Title for the application",
     "type": "text",
@@ -2047,7 +2047,7 @@
       "senderName": {}
     }
   },
-  "otherCallingPermissions": "Micrófono, cámara y otros permisos de FluffyChat",
+  "otherCallingPermissions": "Micrófono, cámara y otros permisos de CloudChat",
   "@otherCallingPermissions": {},
   "emailOrUsername": "Correo electrónico o nombre de usuario",
   "@emailOrUsername": {},
@@ -2081,7 +2081,7 @@
   "@storeSecurlyOnThisDevice": {},
   "openChat": "Abrir chat",
   "@openChat": {},
-  "screenSharingDetail": "Usted está compartiendo su pantalla en FluffyChat",
+  "screenSharingDetail": "Usted está compartiendo su pantalla en CloudChat",
   "@screenSharingDetail": {},
   "allRooms": "Todos los chats grupales",
   "@allRooms": {
@@ -2094,7 +2094,7 @@
   "@dismiss": {},
   "unsupportedAndroidVersion": "Versión de Android no compatible",
   "@unsupportedAndroidVersion": {},
-  "indexedDbErrorLong": "El almacenamiento de mensajes, por desgracia, no está habilitado en el modo privado por defecto.\nPor favor, visite\n - about:config\n - Establezca dom.indexedDB.privateBrowsing.enabled a true\nDe otra forma, no es posible usar FluffyChat.",
+  "indexedDbErrorLong": "El almacenamiento de mensajes, por desgracia, no está habilitado en el modo privado por defecto.\nPor favor, visite\n - about:config\n - Establezca dom.indexedDB.privateBrowsing.enabled a true\nDe otra forma, no es posible usar CloudChat.",
   "@indexedDbErrorLong": {},
   "startFirstChat": "Comience su primer chat",
   "@startFirstChat": {},
@@ -2122,7 +2122,7 @@
   "@messagesStyle": {},
   "chatDescription": "Descripción del chat",
   "@chatDescription": {},
-  "callingAccountDetails": "Permite a FluffyChat utilizar la aplicación de llamadas nativa de Android.",
+  "callingAccountDetails": "Permite a CloudChat utilizar la aplicación de llamadas nativa de Android.",
   "@callingAccountDetails": {},
   "enterSpace": "Unirse al espacio",
   "@enterSpace": {},

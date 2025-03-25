@@ -9,9 +9,9 @@ import 'package:matrix/matrix.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:universal_html/html.dart' as html;
 
-import 'package:fluffychat/utils/platform_infos.dart';
-import 'package:fluffychat/utils/size_string.dart';
-import 'package:fluffychat/widgets/future_loading_dialog.dart';
+import 'package:cloudchat/utils/platform_infos.dart';
+import 'package:cloudchat/utils/size_string.dart';
+import 'package:cloudchat/widgets/future_loading_dialog.dart';
 
 extension MatrixFileExtension on MatrixFile {
   void save(BuildContext context) async {

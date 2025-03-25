@@ -9,9 +9,9 @@ import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:matrix/encryption.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/widgets/adaptive_dialog_action.dart';
-import 'package:fluffychat/widgets/avatar.dart';
-import 'package:fluffychat/widgets/future_loading_dialog.dart';
+import 'package:cloudchat/widgets/adaptive_dialog_action.dart';
+import 'package:cloudchat/widgets/avatar.dart';
+import 'package:cloudchat/widgets/future_loading_dialog.dart';
 
 class KeyVerificationDialog extends StatefulWidget {
   Future<void> show(BuildContext context) => showAdaptiveDialog(
@@ -243,6 +243,17 @@ class KeyVerificationPageState extends State<KeyVerificationDialog> {
         // maybe add a button to switch between the two and only determine default
         // view for if "emoji" is a present sasType or not?
 
+        title = Text(
+          L10n.of(context).compareEmojiMatch,
+          maxLines: 1,
+          style: const TextStyle(fontSize: 16),
+        );
+        compareWidget = TextSpan(
+          children: widget.request.sasEmojis
+              .map((e) => WidgetSpan(child: _Emoji(e, sasEmoji)))
+              .toList(),
+        );
+        /*
         if (widget.request.sasTypes.contains('emoji')) {
           title = Text(
             L10n.of(context).compareEmojiMatch,
@@ -260,7 +271,7 @@ class KeyVerificationPageState extends State<KeyVerificationDialog> {
           final numbstr = '${numbers[0]}-${numbers[1]}-${numbers[2]}';
           compareWidget =
               TextSpan(text: numbstr, style: const TextStyle(fontSize: 40));
-        }
+        }*/
         body = Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[

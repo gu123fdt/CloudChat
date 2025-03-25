@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/config/setting_keys.dart';
-import 'package:fluffychat/utils/account_config.dart';
-import 'package:fluffychat/utils/file_selector.dart';
-import 'package:fluffychat/widgets/future_loading_dialog.dart';
-import 'package:fluffychat/widgets/theme_builder.dart';
+import 'package:cloudchat/config/app_config.dart';
+import 'package:cloudchat/config/setting_keys.dart';
+import 'package:cloudchat/utils/account_config.dart';
+import 'package:cloudchat/utils/file_selector.dart';
+import 'package:cloudchat/widgets/future_loading_dialog.dart';
+import 'package:cloudchat/widgets/theme_builder.dart';
 import '../../widgets/matrix.dart';
 import 'settings_style_view.dart';
 

@@ -5,15 +5,15 @@ import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/pages/chat_details/chat_details.dart';
-import 'package:fluffychat/pages/chat_details/participant_list_item.dart';
-import 'package:fluffychat/utils/fluffy_share.dart';
-import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
-import 'package:fluffychat/widgets/avatar.dart';
-import 'package:fluffychat/widgets/chat_settings_popup_menu.dart';
-import 'package:fluffychat/widgets/layouts/max_width_body.dart';
-import 'package:fluffychat/widgets/matrix.dart';
+import 'package:cloudchat/config/app_config.dart';
+import 'package:cloudchat/pages/chat_details/chat_details.dart';
+import 'package:cloudchat/pages/chat_details/participant_list_item.dart';
+import 'package:cloudchat/utils/cloud_share.dart';
+import 'package:cloudchat/utils/matrix_sdk_extensions/matrix_locals.dart';
+import 'package:cloudchat/widgets/avatar.dart';
+import 'package:cloudchat/widgets/chat_settings_popup_menu.dart';
+import 'package:cloudchat/widgets/layouts/max_width_body.dart';
+import 'package:cloudchat/widgets/matrix.dart';
 import '../../utils/url_launcher.dart';
 
 class ChatDetailsView extends StatelessWidget {
@@ -61,7 +61,7 @@ class ChatDetailsView extends StatelessWidget {
                 IconButton(
                   tooltip: L10n.of(context).share,
                   icon: Icon(Icons.adaptive.share_outlined),
-                  onPressed: () => FluffyShare.share(
+                  onPressed: () => CloudShare.share(
                     AppConfig.inviteLinkPrefix + room.canonicalAlias,
                     context,
                   ),
@@ -129,7 +129,7 @@ class ChatDetailsView extends StatelessWidget {
                                             EventTypes.RoomName,
                                           )
                                             ? controller.setDisplaynameAction()
-                                            : FluffyShare.share(
+                                            : CloudShare.share(
                                                 displayname,
                                                 context,
                                                 copyOnly: true,

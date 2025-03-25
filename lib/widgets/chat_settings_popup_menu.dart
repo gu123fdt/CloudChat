@@ -7,7 +7,7 @@ import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/widgets/future_loading_dialog.dart';
+import 'package:cloudchat/widgets/future_loading_dialog.dart';
 import 'matrix.dart';
 
 enum ChatPopupMenuActions { details, mute, unmute, leave, search }

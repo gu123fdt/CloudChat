@@ -19,6 +19,9 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:cloudchat/pages/dialer/call_banner.dart';
+import 'package:cloudchat/pages/dialer/call_banner_controller.dart';
+import 'package:cloudchat/widgets/matrix.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -26,27 +29,31 @@ import 'package:flutter/services.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart' hide VideoRenderer;
-import 'package:just_audio/just_audio.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:matrix/matrix.dart';
+import 'package:provider/provider.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
-import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
-import 'package:fluffychat/utils/platform_infos.dart';
-import 'package:fluffychat/utils/voip/video_renderer.dart';
-import 'package:fluffychat/widgets/avatar.dart';
+import 'package:cloudchat/utils/matrix_sdk_extensions/matrix_locals.dart';
+import 'package:cloudchat/utils/platform_infos.dart';
+import 'package:cloudchat/utils/voip/video_renderer.dart';
+import 'package:cloudchat/widgets/avatar.dart';
 import 'pip/pip_view.dart';
 
 class _StreamView extends StatelessWidget {
+  final WrappedMediaStream wrappedStream;
+  final Client matrixClient;
+  final Uri? prepareAvatarUrl;
+  final String? prepareDisplayName;
+  final bool mainView;
+
   const _StreamView(
     this.wrappedStream, {
     this.mainView = false,
     required this.matrixClient,
+    this.prepareAvatarUrl,
+    this.prepareDisplayName,
   });
-
-  final WrappedMediaStream wrappedStream;
-  final Client matrixClient;
-
-  final bool mainView;
 
   Uri? get avatarUrl => wrappedStream.getUser().avatarUrl;
 
@@ -85,8 +92,8 @@ class _StreamView extends StatelessWidget {
             Container(color: Colors.black54),
             Positioned(
               child: Avatar(
-                mxContent: avatarUrl,
-                name: displayName,
+                mxContent: prepareAvatarUrl ?? avatarUrl,
+                name: prepareDisplayName ?? displayName,
                 size: mainView ? 96 : 48,
                 client: matrixClient,
                 // textSize: mainView ? 36 : 24,
@@ -131,7 +138,10 @@ class Calling extends StatefulWidget {
 }
 
 class MyCallingPage extends State<Calling> {
+  bool firstFrame = true;
   Room? get room => call.room;
+
+  bool isFloating = false;
 
   String get displayName => call.room.getLocalizedDisplayname(
         MatrixLocals(L10n.of(widget.context)),
@@ -174,14 +184,31 @@ class MyCallingPage extends State<Calling> {
   EdgeInsetsGeometry? _localVideoMargin;
   CallState? _state;
 
+  final AudioPlayer _player = AudioPlayer();
+
   void _playCallSound() async {
-    const path = 'assets/sounds/call.ogg';
-    if (kIsWeb || PlatformInfos.isMobile || PlatformInfos.isMacOS) {
-      final player = AudioPlayer();
-      await player.setAsset(path);
-      player.play();
-    } else {
-      Logs().w('Playing sound not implemented for this platform!');
+    if (call.isOutgoing) {
+      const path = 'sounds/call.mp3';
+      if (kIsWeb ||
+          PlatformInfos.isMobile ||
+          PlatformInfos.isMacOS ||
+          PlatformInfos.isWindows) {
+        await _player.setReleaseMode(ReleaseMode.loop);
+        await _player.play(AssetSource(path));
+      } else {
+        Logs().w('Playing sound not implemented for this platform!');
+      }
+    }
+  }
+
+  void _stopCallSound() async {
+    if (call.isOutgoing) {
+      try {
+        await _player.stop();
+        await _player.setReleaseMode(ReleaseMode.stop);
+      } catch (e) {
+        Logs().w('$e');
+      }
     }
   }
 
@@ -190,6 +217,12 @@ class MyCallingPage extends State<Calling> {
     super.initState();
     initialize();
     _playCallSound();
+
+    final recordDeviceId = Matrix.of(context).store.getString("recordDevice");
+
+    if (recordDeviceId != null) {
+      Helper.selectAudioInput(recordDeviceId);
+    }
   }
 
   void initialize() async {
@@ -255,6 +288,7 @@ class MyCallingPage extends State<Calling> {
   void _handleCallState(CallState state) {
     Logs().v('CallingPage::handleCallState: ${state.toString()}');
     if ({CallState.kConnected, CallState.kEnded}.contains(state)) {
+      _stopCallSound();
       HapticFeedback.heavyImpact();
     }
 
@@ -263,6 +297,13 @@ class MyCallingPage extends State<Calling> {
         _state = state;
         if (_state == CallState.kEnded) cleanUp();
       });
+    }
+
+    if (_state == CallState.kEnded &&
+        context.read<CallBannerController>().banner != null) {
+      context.read<CallBannerController>().hideBanner();
+    } else {
+      _createCallBanner(call.isMicrophoneMuted);
     }
   }
 
@@ -284,6 +325,7 @@ class MyCallingPage extends State<Calling> {
 
   void _muteMic() {
     setState(() {
+      _createCallBanner(!call.isMicrophoneMuted);
       call.setMicrophoneMuted(!call.isMicrophoneMuted);
     });
   }
@@ -343,6 +385,31 @@ class MyCallingPage extends State<Calling> {
     });
   }
   */
+
+  CallBannerType _getCallBannerType() {
+    switch (_state) {
+      case CallState.kRinging:
+      case CallState.kInviteSent:
+      case CallState.kCreateAnswer:
+      case CallState.kConnecting:
+        return call.isOutgoing
+            ? CallBannerType.outgoing
+            : CallBannerType.incoming;
+      case CallState.kConnected:
+        return CallBannerType.connected;
+      case CallState.kEnded:
+        return call.isOutgoing
+            ? CallBannerType.outgoing
+            : CallBannerType.incoming;
+      case CallState.kFledgling:
+      case CallState.kWaitLocalMedia:
+      case CallState.kCreateOffer:
+      case CallState.kEnding:
+      case null:
+        break;
+    }
+    return CallBannerType.incoming;
+  }
 
   List<Widget> _buildActionButtons(bool isFloating) {
     if (isFloating) {
@@ -502,6 +569,10 @@ class MyCallingPage extends State<Calling> {
             primaryStream,
             mainView: true,
             matrixClient: widget.client,
+            prepareAvatarUrl: room!.avatar,
+            prepareDisplayName: room!.getLocalizedDisplayname(
+              MatrixLocals(L10n.of(context)),
+            ),
           ),
         ),
       );
@@ -578,9 +649,46 @@ class MyCallingPage extends State<Calling> {
     return stackWidgets;
   }
 
+  void initOutputCallView(context) {
+    if (firstFrame && call.isOutgoing) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        PIPView.of(context)?.setFloating(true);
+
+        setState(() {
+          firstFrame = false;
+        });
+      });
+    }
+  }
+
+  void _createCallBanner(bool isMicrophoneMuted) {
+    if (isFloating) {
+      context.read<CallBannerController>().showBanner(
+            CallBanner(
+              call: call,
+              hangUp: _hangUp,
+              audioMuted: isMicrophoneMuted,
+              muteMic: _muteMic,
+              callType: _getCallBannerType(),
+              answerCall: _answerCall,
+            ),
+          );
+    }
+
+    if (!isFloating && context.read<CallBannerController>().banner != null) {
+      context.read<CallBannerController>().hideBanner();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return PIPView(
+      onChange: (isFloating) {
+        this.isFloating = isFloating;
+        _createCallBanner(call.isMicrophoneMuted);
+      },
+      floatingHeight: 200,
+      floatingWidth: 300,
       builder: (context, isFloating) {
         return Scaffold(
           resizeToAvoidBottomInset: !isFloating,
@@ -596,6 +704,7 @@ class MyCallingPage extends State<Calling> {
           ),
           body: OrientationBuilder(
             builder: (BuildContext context, Orientation orientation) {
+              initOutputCallView(context);
               return Container(
                 decoration: const BoxDecoration(
                   color: Colors.black87,
@@ -608,7 +717,7 @@ class MyCallingPage extends State<Calling> {
                         top: 24.0,
                         left: 24.0,
                         child: IconButton(
-                          color: Colors.black45,
+                          color: Colors.white,
                           icon: const Icon(Icons.arrow_back),
                           onPressed: () {
                             PIPView.of(context)?.setFloating(true);

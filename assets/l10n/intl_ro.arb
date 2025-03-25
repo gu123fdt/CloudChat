@@ -504,8 +504,8 @@
     "type": "text",
     "placeholders": {}
   },
-  "fluffychat": "FluffyChat",
-  "@fluffychat": {
+  "cloudchat": "CloudChat",
+  "@cloudchat": {
     "type": "text",
     "placeholders": {}
   },
@@ -644,7 +644,7 @@
     "type": "text",
     "placeholders": {}
   },
-  "title": "FluffyChat",
+  "title": "CloudChat",
   "@title": {
     "description": "Title for the application",
     "type": "text",
@@ -686,11 +686,11 @@
   "@callingAccount": {},
   "foregroundServiceRunning": "Această notificare apare când serviciul de foreground rulează.",
   "@foregroundServiceRunning": {},
-  "callingAccountDetails": "Permite FluffyChat să folosească aplicația de apeluri nativă android.",
+  "callingAccountDetails": "Permite CloudChat să folosească aplicația de apeluri nativă android.",
   "@callingAccountDetails": {},
   "appearOnTop": "Apare deasupra",
   "@appearOnTop": {},
-  "appearOnTopDetails": "Permite aplicația să apare deasupra (nu este necesar dacă aveți FluffyChat stabilit ca cont de apeluri)",
+  "appearOnTopDetails": "Permite aplicația să apare deasupra (nu este necesar dacă aveți CloudChat stabilit ca cont de apeluri)",
   "@appearOnTopDetails": {},
   "currentlyActive": "Activ acum",
   "@currentlyActive": {
@@ -901,7 +901,7 @@
       "groupName": {}
     }
   },
-  "inviteText": "{username} v-a invitat la FluffyChat.\n1. Instalați FluffyChat: https://fluffychat.im\n2. Înregistrați-vă sau conectați-vă\n3. Deschideți invitația: {link}",
+  "inviteText": "{username} v-a invitat la CloudChat.\n1. Instalați CloudChat: https://cloudchat.im\n2. Înregistrați-vă sau conectați-vă\n3. Deschideți invitația: {link}",
   "@inviteText": {
     "type": "text",
     "placeholders": {
@@ -1245,11 +1245,11 @@
   "@user": {},
   "custom": "Personalizat",
   "@custom": {},
-  "screenSharingDetail": "Partajați ecranul în FluffyChat",
+  "screenSharingDetail": "Partajați ecranul în CloudChat",
   "@screenSharingDetail": {},
   "storeSecurlyOnThisDevice": "Stoca sigur pe acest dispozitiv",
   "@storeSecurlyOnThisDevice": {},
-  "otherCallingPermissions": "Microfon, cameră și alte permisiuni lui FluffyChat",
+  "otherCallingPermissions": "Microfon, cameră și alte permisiuni lui CloudChat",
   "@otherCallingPermissions": {},
   "whyIsThisMessageEncrypted": "De ce este acest mesaj ilizibil?",
   "@whyIsThisMessageEncrypted": {},
@@ -1372,7 +1372,7 @@
     "type": "text",
     "placeholders": {}
   },
-  "noGoogleServicesWarning": "Se pare că nu aveți serviciile google pe dispozitivul vostru. Această decizie este bună pentru confidențialitatea voastră! Să primiți notificari push în FluffyChat vă recomandăm https://microg.org/ sau https://unifiedpush.org/.",
+  "noGoogleServicesWarning": "Se pare că nu aveți serviciile google pe dispozitivul vostru. Această decizie este bună pentru confidențialitatea voastră! Să primiți notificari push în CloudChat vă recomandăm https://microg.org/ sau https://unifiedpush.org/.",
   "@noGoogleServicesWarning": {
     "type": "text",
     "placeholders": {}
@@ -1562,7 +1562,7 @@
       "username": {}
     }
   },
-  "indexedDbErrorLong": "Stocarea de mesaje nu este activat implicit în modul privat.\nVă rugăm să vizitați\n- about:config\n- stabiliți dom.indexedDB.privateBrowsing.enabled la true\nAstfel, nu este posibil să folosiți FluffyChat.",
+  "indexedDbErrorLong": "Stocarea de mesaje nu este activat implicit în modul privat.\nVă rugăm să vizitați\n- about:config\n- stabiliți dom.indexedDB.privateBrowsing.enabled la true\nAstfel, nu este posibil să folosiți CloudChat.",
   "@indexedDbErrorLong": {},
   "addWidget": "Adăugați widget",
   "@addWidget": {},
@@ -1576,8 +1576,8 @@
     "type": "text",
     "placeholders": {}
   },
-  "newMessageInFluffyChat": "💬 Mesaj nou în FluffyChat",
-  "@newMessageInFluffyChat": {
+  "newMessageInCloudChat": "💬 Mesaj nou în CloudChat",
+  "@newMessageInCloudChat": {
     "type": "text",
     "placeholders": {}
   },

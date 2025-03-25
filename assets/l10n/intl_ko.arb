@@ -139,8 +139,8 @@
     "type": "text",
     "placeholders": {}
   },
-  "fluffychat": "FluffyChat",
-  "@fluffychat": {
+  "cloudchat": "CloudChat",
+  "@cloudchat": {
     "type": "text",
     "placeholders": {}
   },
@@ -1178,8 +1178,8 @@
     "type": "text",
     "placeholders": {}
   },
-  "newMessageInFluffyChat": "💬 FluffyChat에서 새로운 메시지",
-  "@newMessageInFluffyChat": {
+  "newMessageInCloudChat": "💬 CloudChat에서 새로운 메시지",
+  "@newMessageInCloudChat": {
     "type": "text",
     "placeholders": {}
   },
@@ -1318,7 +1318,7 @@
     "type": "text",
     "placeholders": {}
   },
-  "title": "FluffyChat",
+  "title": "CloudChat",
   "@title": {
     "description": "Title for the application",
     "type": "text",
@@ -1474,7 +1474,7 @@
     "type": "text",
     "placeholders": {}
   },
-  "noGoogleServicesWarning": "이 휴대폰에 Firebase Cloud Messaging 서비스가 없는 것 같습니다. FluffyChat에서 푸시 알림을 받으려면 ntfy 사용을 추천합니다. ntfy 혹은 다른 푸시 알림 제공자를 사용하면 알림을 보안적인 방법으로 받을 수 있습니다. ntfy는 PlayStore와 F-Droid에서 설치 가능합니다.",
+  "noGoogleServicesWarning": "이 휴대폰에 Firebase Cloud Messaging 서비스가 없는 것 같습니다. CloudChat에서 푸시 알림을 받으려면 ntfy 사용을 추천합니다. ntfy 혹은 다른 푸시 알림 제공자를 사용하면 알림을 보안적인 방법으로 받을 수 있습니다. ntfy는 PlayStore와 F-Droid에서 설치 가능합니다.",
   "@noGoogleServicesWarning": {
     "type": "text",
     "placeholders": {}
@@ -1728,7 +1728,7 @@
     "type": "text",
     "placeholders": {}
   },
-  "inviteText": "{username}님이 당신을 FluffyChat에 초대했습니다.\n1. FluffyChat 설치: https://fluffychat.im \n2. 가입하거나 로그인 \n3. 초대 링크 열기: \n {link}",
+  "inviteText": "{username}님이 당신을 CloudChat에 초대했습니다.\n1. CloudChat 설치: https://cloudchat.im \n2. 가입하거나 로그인 \n3. 초대 링크 열기: \n {link}",
   "@inviteText": {
     "type": "text",
     "placeholders": {
@@ -2069,7 +2069,7 @@
   "@reportErrorDescription": {},
   "widgetJitsi": "Jitsi Meet",
   "@widgetJitsi": {},
-  "indexedDbErrorLong": "메시지 저장은 기본적으로 사생활 보호 모드에서 사용할 수 없습니다.\n- about:config 로 이동\n- dom.indexedDB.privateBrowsing.enabled 를 true로 설정\n그렇지 않으면 FluffyChat을 실행할 수 없습니다.",
+  "indexedDbErrorLong": "메시지 저장은 기본적으로 사생활 보호 모드에서 사용할 수 없습니다.\n- about:config 로 이동\n- dom.indexedDB.privateBrowsing.enabled 를 true로 설정\n그렇지 않으면 CloudChat을 실행할 수 없습니다.",
   "@indexedDbErrorLong": {},
   "startFirstChat": "첫 번째 채팅을 시작하기",
   "@startFirstChat": {},
@@ -2121,7 +2121,7 @@
   "@unbanUserDescription": {},
   "youRejectedTheInvitation": "초대를 거부했습니다",
   "@youRejectedTheInvitation": {},
-  "otherCallingPermissions": "마이크, 카메라 그리고 다름 FluffyChat 권한",
+  "otherCallingPermissions": "마이크, 카메라 그리고 다름 CloudChat 권한",
   "@otherCallingPermissions": {},
   "messagesStyle": "메세지:",
   "@messagesStyle": {},
@@ -2131,7 +2131,7 @@
   "@newSpaceDescription": {},
   "chatDescription": "채팅 설명",
   "@chatDescription": {},
-  "callingAccountDetails": "FluffyChat이 android 전화앱을 사용 할 수 있도록 허가.",
+  "callingAccountDetails": "CloudChat이 android 전화앱을 사용 할 수 있도록 허가.",
   "@callingAccountDetails": {},
   "enterSpace": "스페이스에 입장",
   "@enterSpace": {},
@@ -2243,7 +2243,7 @@
       "user": {}
     }
   },
-  "appearOnTopDetails": "앱이 상단에 표시되도록 허용 (이미 FluffyChat을 통화 계정으로 설정한 경우에는 필요하지 않음)",
+  "appearOnTopDetails": "앱이 상단에 표시되도록 허용 (이미 CloudChat을 통화 계정으로 설정한 경우에는 필요하지 않음)",
   "@appearOnTopDetails": {},
   "enterRoom": "방에 입장",
   "@enterRoom": {},
@@ -2416,7 +2416,7 @@
   "@indexedDbErrorTitle": {},
   "storeSecurlyOnThisDevice": "이 기기에 안전하게 저장",
   "@storeSecurlyOnThisDevice": {},
-  "screenSharingDetail": "FluffyChat에 당신의 화면을 공유하는중",
+  "screenSharingDetail": "CloudChat에 당신의 화면을 공유하는중",
   "@screenSharingDetail": {},
   "blockUsername": "유저 이름 무시",
   "@blockUsername": {},
@@ -2791,7 +2791,7 @@
   },
   "noContactInformationProvided": "서버가 유효한 연락처 정보를 제공하지 않습니다",
   "@noContactInformationProvided": {},
-  "welcomeText": "안녕하세요 👋 제 이름은 FluffyChat이에요. 당신은 Htpps://matrix.org에 호환되는 어떤 Homeserver에도 가입할 수 있어요. 그리고 아무나 대화하세요! 저는 큰 대화 네트워크랍니다! 😄",
+  "welcomeText": "안녕하세요 👋 제 이름은 CloudChat이에요. 당신은 Htpps://matrix.org에 호환되는 어떤 Homeserver에도 가입할 수 있어요. 그리고 아무나 대화하세요! 저는 큰 대화 네트워크랍니다! 😄",
   "@welcomeText": {},
   "changeGeneralChatSettings": "일반 대화 설정 번경하기",
   "@changeGeneralChatSettings": {},

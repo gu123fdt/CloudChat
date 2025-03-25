@@ -3,6 +3,7 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  audioplayers_windows
   desktop_drop
   dynamic_color
   emoji_picker_flutter
@@ -10,16 +11,25 @@ list(APPEND FLUTTER_PLUGIN_LIST
   flutter_secure_storage_windows
   flutter_webrtc
   geolocator_windows
+  just_audio_windows
+  local_notifier
   pasteboard
   permission_handler_windows
   record_windows
+  screen_retriever_windows
   share_plus
   sqlcipher_flutter_libs
+  tray_manager
   url_launcher_windows
+  window_manager
   window_to_front
+  windows_single_instance
+  windows_taskbar
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST
+  ogg_opus_player
+  system_clock
 )
 
 set(PLUGIN_BUNDLED_LIBRARIES)

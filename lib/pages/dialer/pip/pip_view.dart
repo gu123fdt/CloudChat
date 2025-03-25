@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 
-import 'package:fluffychat/config/themes.dart';
+import 'package:cloudchat/config/themes.dart';
 import 'dismiss_keyboard.dart';
 
 class PIPView extends StatefulWidget {
   final PIPViewCorner initialCorner;
   final double? floatingWidth;
   final double? floatingHeight;
+  final Function(bool)? onChange;
   final bool avoidKeyboard;
 
   final Widget Function(
@@ -19,6 +20,7 @@ class PIPView extends StatefulWidget {
     required this.builder,
     this.initialCorner = PIPViewCorner.topRight,
     this.floatingWidth,
+    this.onChange,
     this.floatingHeight,
     this.avoidKeyboard = true,
   });
@@ -45,11 +47,11 @@ class PIPViewState extends State<PIPView> with TickerProviderStateMixin {
     super.initState();
     _corner = widget.initialCorner;
     _toggleFloatingAnimationController = AnimationController(
-      duration: FluffyThemes.animationDuration,
+      duration: CloudThemes.animationDuration,
       vsync: this,
     );
     _dragAnimationController = AnimationController(
-      duration: FluffyThemes.animationDuration,
+      duration: CloudThemes.animationDuration,
       vsync: this,
     );
   }
@@ -76,6 +78,10 @@ class PIPViewState extends State<PIPView> with TickerProviderStateMixin {
     dismissKeyboard(context);
     setState(() {
       _floating = floating;
+
+      if (widget.onChange != null) {
+        widget.onChange!(floating);
+      }
     });
     _toggleFloatingAnimationController.forward();
   }
@@ -83,6 +89,9 @@ class PIPViewState extends State<PIPView> with TickerProviderStateMixin {
   void stopFloating() {
     if (_isAnimating()) return;
     dismissKeyboard(context);
+    if (widget.onChange != null) {
+      widget.onChange!(false);
+    }
     _toggleFloatingAnimationController.reverse().whenCompleteOrCancel(() {
       if (mounted) {
         setState(() {

@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
-import 'package:just_audio/just_audio.dart';
+import 'package:audioplayers/audioplayers.dart';
 
-import 'package:fluffychat/utils/platform_infos.dart';
+import 'package:cloudchat/utils/platform_infos.dart';
 
 class UserMediaManager {
   factory UserMediaManager() {
@@ -21,12 +21,11 @@ class UserMediaManager {
   Future<void> startRingingTone() async {
     if (PlatformInfos.isMobile) {
       await _flutterRingtonePlayer.playRingtone(volume: 80);
-    } else if ((kIsWeb || PlatformInfos.isMacOS) &&
-        _assetsAudioPlayer != null) {
-      const path = 'assets/sounds/phone.ogg';
+    } else if ((kIsWeb || PlatformInfos.isMacOS || PlatformInfos.isWindows)) {
+      const path = 'sounds/phone.mp3';
       final player = _assetsAudioPlayer = AudioPlayer();
-      player.setAsset(path);
-      player.play();
+      await player.setReleaseMode(ReleaseMode.loop);
+      await player.play(AssetSource(path));
     }
     return;
   }
@@ -35,7 +34,8 @@ class UserMediaManager {
     if (PlatformInfos.isMobile) {
       await _flutterRingtonePlayer.stop();
     }
-    await _assetsAudioPlayer?.stop();
+    await _assetsAudioPlayer!.stop();
+    await _assetsAudioPlayer!.setReleaseMode(ReleaseMode.stop);
     _assetsAudioPlayer = null;
     return;
   }

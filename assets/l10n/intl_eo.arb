@@ -727,8 +727,8 @@
     "type": "text",
     "placeholders": {}
   },
-  "fluffychat": "FluffyChat",
-  "@fluffychat": {
+  "cloudchat": "CloudChat",
+  "@cloudchat": {
     "type": "text",
     "placeholders": {}
   },
@@ -887,7 +887,7 @@
     "type": "text",
     "placeholders": {}
   },
-  "inviteText": "{username} invitis vin al FluffyChat. \n1. Instalu la aplikaĵon FluffyChat: https://fluffychat.im \n2. Registriĝu aŭ salutu \n3. Malfermu la invitan ligilon: {link}",
+  "inviteText": "{username} invitis vin al CloudChat. \n1. Instalu la aplikaĵon CloudChat: https://cloudchat.im \n2. Registriĝu aŭ salutu \n3. Malfermu la invitan ligilon: {link}",
   "@inviteText": {
     "type": "text",
     "placeholders": {
@@ -1029,8 +1029,8 @@
     "type": "text",
     "placeholders": {}
   },
-  "newMessageInFluffyChat": "Nova mesaĝo en FluffyChat",
-  "@newMessageInFluffyChat": {
+  "newMessageInCloudChat": "Nova mesaĝo en CloudChat",
+  "@newMessageInCloudChat": {
     "type": "text",
     "placeholders": {}
   },
@@ -1064,7 +1064,7 @@
     "type": "text",
     "placeholders": {}
   },
-  "noGoogleServicesWarning": "Ŝajnas, ke via telefono ne havas servojn de Google. Tio estas bona decido por via privateco! Por ricevadi pasivajn sciigojn en FluffyChat, ni rekomendas, ke vi uzu la https://microg.org/ aŭ https://unifiedpush.org/.",
+  "noGoogleServicesWarning": "Ŝajnas, ke via telefono ne havas servojn de Google. Tio estas bona decido por via privateco! Por ricevadi pasivajn sciigojn en CloudChat, ni rekomendas, ke vi uzu la https://microg.org/ aŭ https://unifiedpush.org/.",
   "@noGoogleServicesWarning": {
     "type": "text",
     "placeholders": {}
@@ -1607,7 +1607,7 @@
     "type": "text",
     "placeholders": {}
   },
-  "title": "FluffyChat",
+  "title": "CloudChat",
   "@title": {
     "description": "Title for the application",
     "type": "text",

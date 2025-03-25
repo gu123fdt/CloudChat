@@ -1,0 +1,10 @@
+prefix=C:/Program Files (x86)/olm
+exec_prefix=${prefix}
+includedir=C:/Program Files (x86)/olm/include
+libdir=C:/Program Files (x86)/olm/lib
+
+Name: olm
+Description: implementation of the Double Ratchet cryptographic ratchet in C++
+Version: 3.2.16
+Cflags: -I${includedir}
+Libs: -L${libdir} -lolm

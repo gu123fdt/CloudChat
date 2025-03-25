@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:cloudchat/utils/thread_highlights.dart';
+import 'package:cloudchat/utils/thread_unread_data.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -15,17 +18,20 @@ import 'package:matrix/encryption.dart';
 import 'package:matrix/matrix.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tray_manager/tray_manager.dart';
 import 'package:universal_html/html.dart' as html;
 import 'package:url_launcher/url_launcher_string.dart';
 
-import 'package:fluffychat/utils/client_manager.dart';
-import 'package:fluffychat/utils/init_with_restore.dart';
-import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_file_extension.dart';
-import 'package:fluffychat/utils/platform_infos.dart';
-import 'package:fluffychat/utils/uia_request_manager.dart';
-import 'package:fluffychat/utils/voip_plugin.dart';
-import 'package:fluffychat/widgets/fluffy_chat_app.dart';
-import 'package:fluffychat/widgets/future_loading_dialog.dart';
+import 'package:cloudchat/utils/client_manager.dart';
+import 'package:cloudchat/utils/init_with_restore.dart';
+import 'package:cloudchat/utils/matrix_sdk_extensions/matrix_file_extension.dart';
+import 'package:cloudchat/utils/platform_infos.dart';
+import 'package:cloudchat/utils/uia_request_manager.dart';
+import 'package:cloudchat/utils/voip_plugin.dart';
+import 'package:cloudchat/widgets/cloud_chat_app.dart';
+import 'package:cloudchat/widgets/future_loading_dialog.dart';
+import 'package:window_manager/window_manager.dart';
+import 'package:windows_taskbar/windows_taskbar.dart';
 import '../config/app_config.dart';
 import '../config/setting_keys.dart';
 import '../pages/key_verification/key_verification_dialog.dart';
@@ -60,9 +66,12 @@ class Matrix extends StatefulWidget {
       Provider.of<MatrixState>(context, listen: false);
 }
 
-class MatrixState extends State<Matrix> with WidgetsBindingObserver {
+class MatrixState extends State<Matrix>
+    with TrayListener, WidgetsBindingObserver {
   int _activeClient = -1;
   String? activeBundle;
+
+  ThreadUnreadData threadUnreadData = ThreadUnreadData();
 
   SharedPreferences get store => widget.store;
 
@@ -71,6 +80,8 @@ class MatrixState extends State<Matrix> with WidgetsBindingObserver {
   bool? loginRegistrationSupported;
 
   BackgroundPush? backgroundPush;
+
+  StreamSubscription? unreadCountSubscription;
 
   Client get client {
     if (widget.clients.isEmpty) {
@@ -92,12 +103,73 @@ class MatrixState extends State<Matrix> with WidgetsBindingObserver {
   late String currentClientSecret;
   RequestTokenResponse? currentThreepidCreds;
 
+  void setMarker() async {
+    final unreadCount = client.rooms
+        .where((r) => (r.isUnread || r.membership == Membership.invite))
+        .length;
+
+    if (PlatformInfos.isWindows) {
+      if (unreadCount == 0) {
+        WindowsTaskbar.resetOverlayIcon();
+      } else {
+        if (unreadCount < 10) {
+          WindowsTaskbar.setOverlayIcon(
+            ThumbnailToolbarAssetIcon('assets/$unreadCount.ico'),
+            tooltip: 'Stop',
+          );
+        } else {
+          WindowsTaskbar.setOverlayIcon(
+            ThumbnailToolbarAssetIcon('assets/10.ico'),
+            tooltip: 'Stop',
+          );
+        }
+      }
+    }
+  }
+
+  @override
+  void onTrayMenuItemClick(MenuItem menuItem) async {
+    if (menuItem.key == 'show_window') {
+      await windowManager.show();
+    } else if (menuItem.key == 'exit_app') {
+      exit(0);
+    }
+  }
+
+  @override
+  void onTrayIconMouseDown() {
+    trayManager.popUpContextMenu();
+  }
+
+  @override
+  void onTrayIconRightMouseUp() {
+    windowManager.show();
+  }
+
+  @override
+  void onTrayIconRightMouseDown() {
+    windowManager.show();
+  }
+
+  void setUnreadCount() async {
+    await unreadCountSubscription?.cancel();
+
+    setMarker();
+
+    unreadCountSubscription = client.onSync.stream
+        .where((syncUpdate) => syncUpdate.hasRoomUpdate)
+        .listen((syncUpdate) {
+      setMarker();
+    });
+  }
+
   void setActiveClient(Client? cl) {
     final i = widget.clients.indexWhere((c) => c == cl);
     if (i != -1) {
       _activeClient = i;
       // TODO: Multi-client VoiP support
       createVoipPlugin();
+      setUnreadCount();
     } else {
       Logs().w('Tried to set an unknown client ${cl!.userID} as active');
     }
@@ -168,7 +240,7 @@ class MatrixState extends State<Matrix> with WidgetsBindingObserver {
         );
         _registerSubs(_loginClientCandidate!.clientName);
         _loginClientCandidate = null;
-        FluffyChatApp.router.go('/rooms');
+        CloudChatApp.router.go('/rooms');
       });
     return candidate;
   }
@@ -202,7 +274,7 @@ class MatrixState extends State<Matrix> with WidgetsBindingObserver {
   bool webHasFocus = true;
 
   String? get activeRoomId {
-    final route = FluffyChatApp.router.routeInformationProvider.value.uri.path;
+    final route = CloudChatApp.router.routeInformationProvider.value.uri.path;
     if (!route.startsWith('/rooms/')) return null;
     return route.split('/')[2];
   }
@@ -214,6 +286,8 @@ class MatrixState extends State<Matrix> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
+    trayManager.addListener(this);
+    _initializeTray();
     WidgetsBinding.instance.addObserver(this);
     initMatrix();
     if (PlatformInfos.isWeb) {
@@ -221,6 +295,47 @@ class MatrixState extends State<Matrix> with WidgetsBindingObserver {
     } else {
       initSettings();
     }
+    setUnreadCount();
+    ThreadHighlights().init(this);
+  }
+
+  Future<void> _initializeTray() async {
+    await trayManager.setIcon(
+      Platform.isWindows ? 'assets/logo.ico' : 'assets/logo.png',
+    );
+
+    await trayManager.setContextMenu(
+      Menu(
+        items: [
+          MenuItem(
+            key: 'show_window',
+            label: 'Show',
+          ),
+          MenuItem(
+            key: 'exit_app',
+            label: 'Exit',
+          ),
+        ],
+      ),
+    );
+  }
+
+  String autoLoginAccountRedirect() {
+    if (store.getString("autoLoginToken") != null &&
+        store.getString("autoLoginHomeserver") != null) {
+      if (widget.clients.isNotEmpty) {
+        return "/rooms/settings/addaccount";
+      } else {
+        return "/home";
+      }
+    } else {
+      return client.isLogged() ? '/rooms' : '/home';
+    }
+  }
+
+  bool isAutoLoginAccountDetect() {
+    return store.getString("autoLoginToken") != null &&
+        store.getString("autoLoginHomeserver") != null;
   }
 
   Future<void> initConfig() async {
@@ -234,6 +349,24 @@ class MatrixState extends State<Matrix> with WidgetsBindingObserver {
     } catch (e) {
       Logs().v('[ConfigLoader] config.json not found', e);
     }
+  }
+
+  Future<bool> checkHomeserverIsSupportedRegistration() async {
+    try {
+      await getLoginClient().register();
+    } on MatrixException catch (e) {
+      if (e.session == null || e.authenticationFlows == null) {
+        return false;
+      } else {
+        if (e.authenticationFlows![0].stages
+                .contains("m.login.email.identity") &&
+            e.authenticationFlows![0].stages.length == 1) {
+          return true;
+        }
+      }
+    }
+
+    return false;
   }
 
   void _registerSubs(String name) {
@@ -264,14 +397,14 @@ class MatrixState extends State<Matrix> with WidgetsBindingObserver {
         if (!hidPopup &&
             {KeyVerificationState.done, KeyVerificationState.error}
                 .contains(request.state)) {
-          FluffyChatApp.router.pop('dialog');
+          CloudChatApp.router.pop('dialog');
         }
         hidPopup = true;
       };
       request.onUpdate = null;
       hidPopup = true;
       await KeyVerificationDialog(request: request).show(
-        FluffyChatApp.router.routerDelegate.navigatorKey.currentContext ??
+        CloudChatApp.router.routerDelegate.navigatorKey.currentContext ??
             context,
       );
     });
@@ -285,7 +418,7 @@ class MatrixState extends State<Matrix> with WidgetsBindingObserver {
         widget.clients.remove(c);
         ClientManager.removeClientNameFromStore(c.clientName, store);
         ScaffoldMessenger.of(
-          FluffyChatApp.router.routerDelegate.navigatorKey.currentContext ??
+          CloudChatApp.router.routerDelegate.navigatorKey.currentContext ??
               context,
         ).showSnackBar(
           SnackBar(
@@ -294,15 +427,17 @@ class MatrixState extends State<Matrix> with WidgetsBindingObserver {
         );
 
         if (state != LoginState.loggedIn) {
-          FluffyChatApp.router.go('/rooms');
+          CloudChatApp.router.go('/rooms');
         }
       } else {
-        FluffyChatApp.router
+        CloudChatApp.router
             .go(state == LoginState.loggedIn ? '/rooms' : '/home');
       }
     });
     onUiaRequest[name] ??= c.onUiaRequest.stream.listen(uiaRequestHandler);
-    if (PlatformInfos.isWeb || PlatformInfos.isLinux) {
+    if (PlatformInfos.isWeb ||
+        PlatformInfos.isLinux ||
+        PlatformInfos.isWindows) {
       c.onSync.stream.first.then((s) {
         html.Notification.requestPermission();
         onNotification[name] ??= c.onEvent.stream
@@ -345,7 +480,7 @@ class MatrixState extends State<Matrix> with WidgetsBindingObserver {
         onFcmError: (errorMsg, {Uri? link}) async {
           final result = await showOkCancelAlertDialog(
             barrierDismissible: true,
-            context: FluffyChatApp
+            context: CloudChatApp
                     .router.routerDelegate.navigatorKey.currentContext ??
                 context,
             title: L10n.of(context).pushNotificationsNotAvailable,
@@ -455,7 +590,7 @@ class MatrixState extends State<Matrix> with WidgetsBindingObserver {
     onBlurSub?.cancel();
 
     linuxNotifications?.close();
-
+    unreadCountSubscription?.cancel();
     super.dispose();
   }
 
@@ -489,7 +624,7 @@ class MatrixState extends State<Matrix> with WidgetsBindingObserver {
     );
 
     final exportFileName =
-        'fluffychat-export-${DateFormat(DateFormat.YEAR_MONTH_DAY).format(DateTime.now())}.fluffybackup';
+        'cloudchat-export-${DateFormat(DateFormat.YEAR_MONTH_DAY).format(DateTime.now())}.cloudbackup';
 
     final file = MatrixFile(bytes: exportBytes, name: exportFileName);
     file.save(context);

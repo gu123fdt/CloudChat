@@ -66,7 +66,7 @@ class CallKeepManager {
 
   late FlutterCallkeep _callKeep;
 
-  String get appName => 'FluffyChat';
+  String get appName => 'CloudChat';
 
   Future<bool> get hasPhoneAccountEnabled async =>
       await _callKeep.hasPhoneAccount();
@@ -79,7 +79,7 @@ class CallKeepManager {
         'okButton': 'ok',
         // Required to get audio in background when using Android 11
         'foregroundService': {
-          'channelId': 'com.fluffy.fluffychat',
+          'channelId': 'com.cloud.cloudchat',
           'channelName': 'Foreground service for my app',
           'notificationTitle': '$appName is running on background',
           'notificationIcon': 'mipmap/ic_notification_launcher',
@@ -211,9 +211,9 @@ class CallKeepManager {
     addCall(call.callId, callKeeper);
     await _callKeep.displayIncomingCall(
       call.callId,
-      '${call.room.getLocalizedDisplayname()} (FluffyChat)',
+      '${call.room.getLocalizedDisplayname()} (MatrixChat)',
       localizedCallerName:
-          '${call.room.getLocalizedDisplayname()} (FluffyChat)',
+          '${call.room.getLocalizedDisplayname()} (MatrixChat)',
       handleType: 'number',
       hasVideo: call.type == CallType.kVideo,
     );

@@ -6,9 +6,9 @@ import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart' as sdk;
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/pages/new_group/new_group_view.dart';
-import 'package:fluffychat/utils/file_selector.dart';
-import 'package:fluffychat/widgets/matrix.dart';
+import 'package:cloudchat/pages/new_group/new_group_view.dart';
+import 'package:cloudchat/utils/file_selector.dart';
+import 'package:cloudchat/widgets/matrix.dart';
 
 class NewGroup extends StatefulWidget {
   final CreateGroupType createGroupType;
@@ -23,7 +23,7 @@ class NewGroup extends StatefulWidget {
 
 class NewGroupController extends State<NewGroup> {
   TextEditingController nameController = TextEditingController();
-
+  bool isButtonActive = false;
   bool publicGroup = false;
   bool groupCanBeFound = true;
 
@@ -46,6 +46,16 @@ class NewGroupController extends State<NewGroup> {
   void setPublicGroup(bool b) => setState(() => publicGroup = b);
 
   void setGroupCanBeFound(bool b) => setState(() => groupCanBeFound = b);
+
+  @override
+  void initState() {
+    super.initState();
+    nameController.addListener(() {
+      setState(() {
+        isButtonActive = nameController.text.trim() != "";
+      });
+    });
+  }
 
   void selectPhoto() async {
     final photo = await selectFiles(

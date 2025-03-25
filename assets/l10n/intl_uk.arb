@@ -444,8 +444,8 @@
     "type": "text",
     "placeholders": {}
   },
-  "fluffychat": "FluffyChat",
-  "@fluffychat": {
+  "cloudchat": "CloudChat",
+  "@cloudchat": {
     "type": "text",
     "placeholders": {}
   },
@@ -549,7 +549,7 @@
     "type": "text",
     "placeholders": {}
   },
-  "inviteText": "{username} запрошує вас у FluffyChat. \n1. Перейдіть на fluffychat.im й установіть застосунок \n2. Зареєструйтесь або ввійдіть \n3. Відкрийте запрошувальне посилання:\n {link}",
+  "inviteText": "{username} запрошує вас у CloudChat. \n1. Перейдіть на cloudchat.im й установіть застосунок \n2. Зареєструйтесь або ввійдіть \n3. Відкрийте запрошувальне посилання:\n {link}",
   "@inviteText": {
     "type": "text",
     "placeholders": {
@@ -646,6 +646,13 @@
       "homeserver": {}
     }
   },
+  "registerTo": "Зареєструватись на {homeserver}",
+  "@registerTo": {
+    "type": "text",
+    "placeholders": {
+      "homeserver": {}
+    }
+  },
   "logout": "Вийти",
   "@logout": {
     "type": "text",
@@ -666,8 +673,8 @@
     "type": "text",
     "placeholders": {}
   },
-  "newMessageInFluffyChat": "💬 Нове повідомлення у FluffyChat",
-  "@newMessageInFluffyChat": {
+  "newMessageInCloudChat": "💬 Нове повідомлення у CloudChat",
+  "@newMessageInCloudChat": {
     "type": "text",
     "placeholders": {}
   },
@@ -963,7 +970,7 @@
     "type": "text",
     "placeholders": {}
   },
-  "title": "FluffyChat",
+  "title": "CloudChat",
   "@title": {
     "description": "Title for the application",
     "type": "text",
@@ -1366,7 +1373,7 @@
     "type": "text",
     "placeholders": {}
   },
-  "pleaseEnter4Digits": "Введіть 4 цифри або залиште порожнім, щоб вимкнути блокування застосунку.",
+  "pleaseEnter4Digits": "Введіть 4 цифри.",
   "@pleaseEnter4Digits": {
     "type": "text",
     "placeholders": {}
@@ -2147,7 +2154,7 @@
   "@hydrateTorLong": {},
   "indexedDbErrorTitle": "Проблеми приватного режиму",
   "@indexedDbErrorTitle": {},
-  "indexedDbErrorLong": "На жаль, сховище повідомлень не ввімкнуто у приватному режимі типово.\nВідкрийте\n - about:config\n - установіть для dom.indexedDB.privateBrowsing.enabled значення true\nІнакше запустити FluffyChat буде неможливо.",
+  "indexedDbErrorLong": "На жаль, сховище повідомлень не ввімкнуто у приватному режимі типово.\nВідкрийте\n - about:config\n - установіть для dom.indexedDB.privateBrowsing.enabled значення true\nІнакше запустити CloudChat буде неможливо.",
   "@indexedDbErrorLong": {},
   "dehydrate": "Експортувати сеанс та очистити пристрій",
   "@dehydrate": {},
@@ -2188,11 +2195,11 @@
   "@callingPermissions": {},
   "callingAccount": "Обліковий запис для виклику",
   "@callingAccount": {},
-  "callingAccountDetails": "Дозволяє FluffyChat використовувати основний застосунок Android для набору номера.",
+  "callingAccountDetails": "Дозволяє CloudChat використовувати основний застосунок Android для набору номера.",
   "@callingAccountDetails": {},
   "appearOnTop": "З'являтися зверху",
   "@appearOnTop": {},
-  "appearOnTopDetails": "Дозволяє застосунку показуватися зверху (не потрібно, якщо Fluffychat вже налаштований обліковим записом для викликів)",
+  "appearOnTopDetails": "Дозволяє застосунку показуватися зверху (не потрібно, якщо Cloudchat вже налаштований обліковим записом для викликів)",
   "@appearOnTopDetails": {},
   "newGroup": "Нова група",
   "@newGroup": {},
@@ -2202,7 +2209,7 @@
   "@enterSpace": {},
   "enterRoom": "Увійти в кімнату",
   "@enterRoom": {},
-  "otherCallingPermissions": "Мікрофон, камера та інші дозволи FluffyChat",
+  "otherCallingPermissions": "Мікрофон, камера та інші дозволи CloudChat",
   "@otherCallingPermissions": {},
   "allSpaces": "Усі простори",
   "@allSpaces": {},
@@ -2375,9 +2382,9 @@
   "@redactMessageDescription": {},
   "setChatDescription": "Налаштувати опис бесіди",
   "@setChatDescription": {},
-  "inviteGroupChat": "📨 Запросити до групової бесіди",
+  "inviteGroupChat": "📨 Вас запросили до групової бесіди",
   "@inviteGroupChat": {},
-  "invitePrivateChat": "📨 Запросити до приватної бесіди",
+  "invitePrivateChat": "📨 Вас запросили до приватної бесіди",
   "@invitePrivateChat": {},
   "emoteKeyboardNoRecents": "Тут з'являться нещодавно використані смайлики...",
   "@emoteKeyboardNoRecents": {
@@ -2388,6 +2395,13 @@
   "@invalidInput": {},
   "wrongPinEntered": "Введено неправильний PIN! Повторіть спробу за {seconds} секунд...",
   "@wrongPinEntered": {
+    "type": "text",
+    "placeholders": {
+      "seconds": {}
+    }
+  },
+  "wrongPasswordEntered": "Введено неправильний пароль! Повторіть спробу за {seconds} секунд...",
+  "@wrongPasswordEntered": {
     "type": "text",
     "placeholders": {
       "seconds": {}
@@ -2837,7 +2851,7 @@
   "@continueText": {},
   "manageAccount": "Керувати обліковим записом",
   "@manageAccount": {},
-  "welcomeText": "Привіт-привіт 👋 Це FluffyChat. Ви можете увійти на будь-який сервер, сумісний із https://matrix.org. А потім спілкуватися з будь-ким. Це величезна децентралізована мережа для обміну повідомленнями!",
+  "welcomeText": "Привіт-привіт 👋 Це CloudChat. Ви можете увійти на будь-який сервер, сумісний із https://matrix.org. А потім спілкуватися з будь-ким. Це величезна децентралізована мережа для обміну повідомленнями!",
   "@welcomeText": {},
   "blur": "Розмиття:",
   "@blur": {},
@@ -2885,5 +2899,81 @@
   "addLink": "Додати посилання",
   "@addLink": {},
   "unableToJoinChat": "Неможливо приєднатися до чату. Можливо, інша сторона вже закрила розмову.",
-  "@unableToJoinChat": {}
+  "@unableToJoinChat": {},
+  "jitsiCall": "Створіть Jitsi кімнату",
+  "editJitsiroom": "Редагувати Jitsi кімнату",
+  "roomName": "Назва кімнати",
+  "searchUsers": "Пошук користувачів",
+  "selectedOf": "Вибрано {selected} з {of}",
+  "@selectedOf": {
+    "type": "text",
+    "placeholders": {
+      "selected": {},
+      "of": {}
+    }
+  },
+  "joinToMeeting": "Приєднатися до зустрічі",
+  "recordDivace": "Пристрій запису",
+  "pinned": "Закріплені",
+  "newChatVersionAvailable": "Доступна нова версія чату, натисніть щоб встановити",
+  "email": "Пошта",
+  "usernameAlreadyExists": "Користувач з таким username вже існує",
+  "usernameIsUnsuitable": "Неможливо створити користувача з таким username",
+  "pleaseEnterYourEmail": "Будь ласка, введіть свою адресу електронної пошти",
+  "emailIsNotCorrect": "Електронна пошта вказана неправильно",
+  "emailAlreadyExists": "На цій електронній адресі вже є обліковий запис",
+  "emailConfirmations":  "На вашу пошту було надіслано лист. Після підтвердження ви автоматично потрапите у свій обліковий запис. Якщо ви покинете цю сторінку, реєстрацію доведеться почати спочатку.",
+  "threads": "Обговорення",
+  "threadsCount": "{count} обговорень",
+  "@threadsCount": {
+    "type": "text",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "threadsFrom": "Усі Обговорення у '{roomName}'",
+  "@threadsFrom": {
+    "type": "text",
+    "placeholders": {
+      "roomName": {}
+    }
+  },
+  "moreUsers": "... ще {count} користувачів.",
+  "@moreUsers": {
+    "type": "text",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "autoStart": "Автозапуск програми",
+  "pleaseChooseALockMethod": "Будь ласка, виберіть метод блокування",
+  "pleaseEnterPassword": "Будь ласка, введіть пароль для блокування програми",
+  "passwordMustBeAtLeast6Characters": "Пароль повинен бути не менше 6 символів",
+  "appLockTimeout": "Час блокування програми",
+  "appLockTimeoutDescription": "Блокувати програму після періоду бездіяльності",
+  "pleaseChooseALockTimeout": "Будь ласка, виберіть час блокування",
+  "minutes": "{count} хвилин",
+  "@minutes": {
+    "type": "text",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "never": "Ніколи",
+  "hours": "{count} годин",
+  "@hours": {
+    "type": "text",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "confirmPassword": "Підтвердити пароль",
+  "confirmPin": "Підтвердити PIN",
+  "pinSetSuccessfully": "PIN-код успішно встановлено",
+  "passwordSetSuccessfully": "Пароль успішно встановлено",
+  "removePassword": "Видалити пароль",
+  "removePasswordSuccessfully": "Пароль успішно видалено",
+  "createLink": "Створити посилання на повідомлення",
+  "copySuccessfully": "Посилання скопійовано успішно",
+  "openTextEditor": "Відкрити текстовий редактор"
 }

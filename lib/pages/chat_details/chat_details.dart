@@ -7,13 +7,13 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/pages/chat_details/chat_details_view.dart';
-import 'package:fluffychat/pages/settings/settings.dart';
-import 'package:fluffychat/utils/file_selector.dart';
-import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
-import 'package:fluffychat/utils/platform_infos.dart';
-import 'package:fluffychat/widgets/future_loading_dialog.dart';
-import 'package:fluffychat/widgets/matrix.dart';
+import 'package:cloudchat/pages/chat_details/chat_details_view.dart';
+import 'package:cloudchat/pages/settings/settings.dart';
+import 'package:cloudchat/utils/file_selector.dart';
+import 'package:cloudchat/utils/matrix_sdk_extensions/matrix_locals.dart';
+import 'package:cloudchat/utils/platform_infos.dart';
+import 'package:cloudchat/widgets/future_loading_dialog.dart';
+import 'package:cloudchat/widgets/matrix.dart';
 
 enum AliasActions { copy, delete, setCanonical }
 

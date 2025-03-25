@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:go_router/go_router.dart';
+import 'package:cloudchat/utils/app_locker/app_locker.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/widgets/avatar.dart';
-import 'package:fluffychat/widgets/matrix.dart';
-import '../../utils/fluffy_share.dart';
+import 'package:cloudchat/widgets/avatar.dart';
+import 'package:cloudchat/widgets/matrix.dart';
+import '../../utils/cloud_share.dart';
 import 'chat_list.dart';
 
 class ClientChooserButton extends StatelessWidget {
@@ -26,6 +27,17 @@ class ClientChooserButton extends StatelessWidget {
                 : 1,
       );
     return <PopupMenuEntry<Object>>[
+      if (AppLocker.getLockApp())
+        PopupMenuItem(
+          value: SettingsAction.lockApp,
+          child: Row(
+            children: [
+              const Icon(Icons.lock_outlined),
+              const SizedBox(width: 18),
+              Text(L10n.of(context).appLock),
+            ],
+          ),
+        ),
       PopupMenuItem(
         value: SettingsAction.newGroup,
         child: Row(
@@ -212,7 +224,7 @@ class ClientChooserButton extends StatelessWidget {
           context.go('/rooms/newgroup');
           break;
         case SettingsAction.invite:
-          FluffyShare.shareInviteLink(context);
+          CloudShare.shareInviteLink(context);
           break;
         case SettingsAction.settings:
           context.go('/rooms/settings');
@@ -222,6 +234,9 @@ class ClientChooserButton extends StatelessWidget {
           break;
         case SettingsAction.setStatus:
           controller.setStatus();
+          break;
+        case SettingsAction.lockApp:
+          AppLocker.lockApp();
           break;
       }
     }
@@ -235,4 +250,5 @@ enum SettingsAction {
   invite,
   settings,
   archive,
+  lockApp,
 }

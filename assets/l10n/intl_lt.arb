@@ -34,8 +34,8 @@
     "type": "text",
     "placeholders": {}
   },
-  "fluffychat": "FluffyChat",
-  "@fluffychat": {
+  "cloudchat": "CloudChat",
+  "@cloudchat": {
     "type": "text",
     "placeholders": {}
   },
@@ -873,8 +873,8 @@
     "type": "text",
     "placeholders": {}
   },
-  "newMessageInFluffyChat": "💬 Nauja žinutė FluffyChat'e",
-  "@newMessageInFluffyChat": {
+  "newMessageInCloudChat": "💬 Nauja žinutė CloudChat'e",
+  "@newMessageInCloudChat": {
     "type": "text",
     "placeholders": {}
   },
@@ -1275,7 +1275,7 @@
     "type": "text",
     "placeholders": {}
   },
-  "title": "FluffyChat",
+  "title": "CloudChat",
   "@title": {
     "description": "Title for the application",
     "type": "text",
@@ -1311,7 +1311,7 @@
     "type": "text",
     "placeholders": {}
   },
-  "noGoogleServicesWarning": "Atrodo, kad jūsų telefone nėra Google Services. Tai geras sprendimas jūsų privatumui! Norėdami gauti tiesioginius pranešimus FluffyChat, rekomenduojame naudoti https://microg.org/ arba https://unifiedpush.org/.",
+  "noGoogleServicesWarning": "Atrodo, kad jūsų telefone nėra Google Services. Tai geras sprendimas jūsų privatumui! Norėdami gauti tiesioginius pranešimus CloudChat, rekomenduojame naudoti https://microg.org/ arba https://unifiedpush.org/.",
   "@noGoogleServicesWarning": {
     "type": "text",
     "placeholders": {}
@@ -1748,7 +1748,7 @@
       "targetName": {}
     }
   },
-  "inviteText": "{username} pakvietė jus prisijungti prie FluffyChat. \n1. Įdiekite FluffyChat: https://fluffychat.im \n2. Prisiregistruokite arba prisijunkite \n3. Atidarykite pakvietimo nuorodą: {link}",
+  "inviteText": "{username} pakvietė jus prisijungti prie CloudChat. \n1. Įdiekite CloudChat: https://cloudchat.im \n2. Prisiregistruokite arba prisijunkite \n3. Atidarykite pakvietimo nuorodą: {link}",
   "@inviteText": {
     "type": "text",
     "placeholders": {
@@ -2131,7 +2131,7 @@
   "@callingAccount": {},
   "newSpace": "Nauja erdvė",
   "@newSpace": {},
-  "callingAccountDetails": "Leidžia FluffyChat naudoti vietinę Android rinkiklio programą.",
+  "callingAccountDetails": "Leidžia CloudChat naudoti vietinę Android rinkiklio programą.",
   "@callingAccountDetails": {},
   "appearOnTop": "Rodyti viršuje",
   "@appearOnTop": {},
@@ -2168,7 +2168,7 @@
   "@recoveryKey": {},
   "recoveryKeyLost": "Pamestas atkūrimo raktas?",
   "@recoveryKeyLost": {},
-  "indexedDbErrorLong": "Deja, pagal numatytuosius nustatymus žinučių saugojimas privačiame režime nėra įjungtas.\nPrašome apsilankyti\n - about:config\n - nustatykite dom.indexedDB.privateBrowsing.enabled į true\nPriešingu atveju FluffyChat paleisti neįmanoma.",
+  "indexedDbErrorLong": "Deja, pagal numatytuosius nustatymus žinučių saugojimas privačiame režime nėra įjungtas.\nPrašome apsilankyti\n - about:config\n - nustatykite dom.indexedDB.privateBrowsing.enabled į true\nPriešingu atveju CloudChat paleisti neįmanoma.",
   "@indexedDbErrorLong": {},
   "countFiles": "{count} failai",
   "@countFiles": {
@@ -2196,9 +2196,9 @@
   "@foregroundServiceRunning": {},
   "screenSharingTitle": "ekrano bendrinimas",
   "@screenSharingTitle": {},
-  "appearOnTopDetails": "Leidžia programėlę rodyti viršuje (nebūtina, jei jau esate nustatę Fluffychat kaip skambinimo paskyrą)",
+  "appearOnTopDetails": "Leidžia programėlę rodyti viršuje (nebūtina, jei jau esate nustatę Cloudchat kaip skambinimo paskyrą)",
   "@appearOnTopDetails": {},
-  "otherCallingPermissions": "Mikrofonas, kamera ir kiti FluffyChat leidimai",
+  "otherCallingPermissions": "Mikrofonas, kamera ir kiti CloudChat leidimai",
   "@otherCallingPermissions": {},
   "whyIsThisMessageEncrypted": "Kodėl ši žinutė neperskaitoma?",
   "@whyIsThisMessageEncrypted": {},

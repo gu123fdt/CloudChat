@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/config/themes.dart';
-import 'package:fluffychat/utils/client_download_content_extension.dart';
-import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_file_extension.dart';
-import 'package:fluffychat/widgets/matrix.dart';
+import 'package:cloudchat/config/themes.dart';
+import 'package:cloudchat/utils/client_download_content_extension.dart';
+import 'package:cloudchat/utils/matrix_sdk_extensions/matrix_file_extension.dart';
+import 'package:cloudchat/widgets/matrix.dart';
 
 class MxcImage extends StatefulWidget {
   final Uri? uri;
@@ -34,9 +34,9 @@ class MxcImage extends StatefulWidget {
     this.placeholder,
     this.isThumbnail = true,
     this.animated = false,
-    this.animationDuration = FluffyThemes.animationDuration,
+    this.animationDuration = CloudThemes.animationDuration,
     this.retryDuration = const Duration(seconds: 2),
-    this.animationCurve = FluffyThemes.animationCurve,
+    this.animationCurve = CloudThemes.animationCurve,
     this.thumbnailMethod = ThumbnailMethod.scale,
     this.cacheKey,
     this.client,

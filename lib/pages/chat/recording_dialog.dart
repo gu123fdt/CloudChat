@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloudchat/widgets/matrix.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -10,8 +11,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
-import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/utils/platform_infos.dart';
+import 'package:cloudchat/config/app_config.dart';
+import 'package:cloudchat/utils/platform_infos.dart';
 import 'events/audio_player.dart';
 
 class RecordingDialog extends StatefulWidget {
@@ -62,6 +63,14 @@ class RecordingDialogState extends State<RecordingDialog> {
       }
       await WakelockPlus.enable();
 
+      final devices = await _audioRecorder.listInputDevices();
+      InputDevice? device;
+
+      final recordDeviceId = Matrix.of(context).store.getString("recordDevice");
+      if (devices.any((d) => d.id == recordDeviceId)) {
+        device = devices.firstWhere((device) => device.id == recordDeviceId);
+      }
+
       await _audioRecorder.start(
         RecordConfig(
           bitRate: bitRate,
@@ -71,6 +80,7 @@ class RecordingDialogState extends State<RecordingDialog> {
           echoCancel: true,
           noiseSuppress: true,
           encoder: codec,
+          device: device,
         ),
         path: path ?? '',
       );

@@ -1,21 +1,24 @@
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:collection/collection.dart';
+import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_shortcuts/flutter_shortcuts.dart';
+import 'package:flutter_shortcuts_new/flutter_shortcuts_new.dart';
 import 'package:matrix/matrix.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/utils/client_download_content_extension.dart';
-import 'package:fluffychat/utils/client_manager.dart';
-import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
-import 'package:fluffychat/utils/platform_infos.dart';
-import 'package:fluffychat/utils/voip/callkeep_manager.dart';
+import 'package:cloudchat/config/app_config.dart';
+import 'package:cloudchat/utils/client_download_content_extension.dart';
+import 'package:cloudchat/utils/client_manager.dart';
+import 'package:cloudchat/utils/matrix_sdk_extensions/matrix_locals.dart';
+import 'package:cloudchat/utils/platform_infos.dart';
+import 'package:cloudchat/utils/voip/callkeep_manager.dart';
+import 'package:vibration/vibration.dart';
 
 Future<void> pushHelper(
   PushNotification notification, {
@@ -38,7 +41,7 @@ Future<void> pushHelper(
     l10n ??= await lookupL10n(const Locale('en'));
     flutterLocalNotificationsPlugin.show(
       notification.roomId?.hashCode ?? 0,
-      l10n.newMessageInFluffyChat,
+      l10n.newMessageInCloudChat,
       l10n.openAppToReadMessages,
       NotificationDetails(
         iOS: const DarwinNotificationDetails(),
@@ -121,8 +124,31 @@ Future<void> _tryPushHelper(
   }
 
   if (event.type == EventTypes.CallInvite) {
+    final store = await SharedPreferences.getInstance();
+    await store.setString('CallInvite', jsonEncode(event.toJson()));
+
     CallKeepManager().initialize();
+
+    Vibration.vibrate(
+      pattern: [
+        500,
+        1000,
+        500,
+        1000,
+      ],
+      repeat: 0,
+    );
+
+    FlutterForegroundTask.setOnLockScreenVisibility(true);
+    FlutterForegroundTask.wakeUpScreen();
+    FlutterForegroundTask.launchApp();
+  }
+
+  if (event.type == EventTypes.CallInvite) {
   } else if (event.type == EventTypes.CallHangup) {
+    final store = await SharedPreferences.getInstance();
+    store.remove('CallInvite');
+    Vibration.cancel();
     client.backgroundSync = false;
   }
 
@@ -143,7 +169,7 @@ Future<void> _tryPushHelper(
 
   // Calculate the body
   final body = event.type == EventTypes.Encrypted
-      ? l10n.newMessageInFluffyChat
+      ? l10n.newMessageInCloudChat
       : await event.calcLocalizedBody(
           matrixLocals,
           plaintextBody: true,

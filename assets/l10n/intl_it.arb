@@ -614,8 +614,8 @@
     "type": "text",
     "placeholders": {}
   },
-  "fluffychat": "FluffyChat",
-  "@fluffychat": {
+  "cloudchat": "CloudChat",
+  "@cloudchat": {
     "type": "text",
     "placeholders": {}
   },
@@ -774,7 +774,7 @@
     "type": "text",
     "placeholders": {}
   },
-  "inviteText": "{username} ti ha invitato/a a FluffyChat.\n1. Visita fluffychat.im e installa l'applicazione\n2. Iscriviti o accedi\n3. Apri il collegamento di invito: \n {link}",
+  "inviteText": "{username} ti ha invitato/a a CloudChat.\n1. Visita cloudchat.im e installa l'applicazione\n2. Iscriviti o accedi\n3. Apri il collegamento di invito: \n {link}",
   "@inviteText": {
     "type": "text",
     "placeholders": {
@@ -916,8 +916,8 @@
     "type": "text",
     "placeholders": {}
   },
-  "newMessageInFluffyChat": "💬 Nuovo messaggio in FluffyChat",
-  "@newMessageInFluffyChat": {
+  "newMessageInCloudChat": "💬 Nuovo messaggio in CloudChat",
+  "@newMessageInCloudChat": {
     "type": "text",
     "placeholders": {}
   },
@@ -1419,7 +1419,7 @@
     "type": "text",
     "placeholders": {}
   },
-  "title": "FluffyChat",
+  "title": "CloudChat",
   "@title": {
     "description": "Title for the application",
     "type": "text",
@@ -1863,7 +1863,7 @@
   "@widgetJitsi": {},
   "messageType": "Tipo del Messaggio",
   "@messageType": {},
-  "indexedDbErrorLong": "Sfortunatamente l'archiviazione dei messaggi non è abilitata in modalità privata per impostazione predefinita.\nPer favore visita\n - about:config\n - imposta dom.indexedDB.privateBrowsing.enabled su true\nAltrimenti, non è possibile eseguire FluffyChat.",
+  "indexedDbErrorLong": "Sfortunatamente l'archiviazione dei messaggi non è abilitata in modalità privata per impostazione predefinita.\nPer favore visita\n - about:config\n - imposta dom.indexedDB.privateBrowsing.enabled su true\nAltrimenti, non è possibile eseguire CloudChat.",
   "@indexedDbErrorLong": {},
   "oneClientLoggedOut": "Uno dei tuoi client è stato disconnesso",
   "@oneClientLoggedOut": {},
@@ -1932,7 +1932,7 @@
   "@sendOnEnter": {},
   "youRejectedTheInvitation": "Hai rifiutato l'invito",
   "@youRejectedTheInvitation": {},
-  "otherCallingPermissions": "Microfono, fotocamera e altri permessi di FluffyChat",
+  "otherCallingPermissions": "Microfono, fotocamera e altri permessi di CloudChat",
   "@otherCallingPermissions": {},
   "messagesStyle": "Messaggi:",
   "@messagesStyle": {},
@@ -1944,7 +1944,7 @@
   "@newSpaceDescription": {},
   "chatDescription": "Descrizione della chat",
   "@chatDescription": {},
-  "callingAccountDetails": "Dai l'autorizzazione a FluffyChat di usare l'app di composizione Android nativa.",
+  "callingAccountDetails": "Dai l'autorizzazione a CloudChat di usare l'app di composizione Android nativa.",
   "@callingAccountDetails": {},
   "enterSpace": "Unirsi allo spazio",
   "@enterSpace": {},
@@ -2108,7 +2108,7 @@
       "user": {}
     }
   },
-  "appearOnTopDetails": "Permetti all'app di apparire in alto (non necessario se hai già impostato Fluffychat come account di chiamata)",
+  "appearOnTopDetails": "Permetti all'app di apparire in alto (non necessario se hai già impostato Cloudchat come account di chiamata)",
   "@appearOnTopDetails": {},
   "enterRoom": "Unirsi alla stanza",
   "@enterRoom": {},
@@ -2843,7 +2843,7 @@
   },
   "continueText": "Continua",
   "@continueText": {},
-  "welcomeText": "Hey Hey 👋 Questa è FluffyChat. Puoi accedere a qualsiasi homeserver compatibile con https://matrix.org. E poi chattare con chiunque. È un'enorme rete di messaggistica decentralizzata!",
+  "welcomeText": "Hey Hey 👋 Questa è CloudChat. Puoi accedere a qualsiasi homeserver compatibile con https://matrix.org. E poi chattare con chiunque. È un'enorme rete di messaggistica decentralizzata!",
   "@welcomeText": {},
   "blur": "Sfocatura:",
   "@blur": {},

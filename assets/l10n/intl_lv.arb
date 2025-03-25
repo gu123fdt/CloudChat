@@ -158,7 +158,7 @@
   },
   "messageType": "Ziņas veids",
   "@messageType": {},
-  "indexedDbErrorLong": "Diemžēl ziņu krātuve pēc noklusējuma nav iespējota privātajā režīmā.\nLūgums apmeklēt\n - about:config\n - iestatīt dom.indexedDB.privateBrowsing.enabled kā true\nPretējā gadījumā nav iespējams palaist FluffyChat.",
+  "indexedDbErrorLong": "Diemžēl ziņu krātuve pēc noklusējuma nav iespējota privātajā režīmā.\nLūgums apmeklēt\n - about:config\n - iestatīt dom.indexedDB.privateBrowsing.enabled kā true\nPretējā gadījumā nav iespējams palaist CloudChat.",
   "@indexedDbErrorLong": {},
   "oneClientLoggedOut": "Viens no klientiem ir atteicies",
   "@oneClientLoggedOut": {},
@@ -177,7 +177,7 @@
       "targetName": {}
     }
   },
-  "title": "FluffyChat",
+  "title": "CloudChat",
   "@title": {
     "description": "Title for the application",
     "type": "text",
@@ -472,7 +472,7 @@
   },
   "youRejectedTheInvitation": "Tu noraidīji uzaicinājumu",
   "@youRejectedTheInvitation": {},
-  "otherCallingPermissions": "Mikrofons, kamera un citas FluffyChat atļaujas",
+  "otherCallingPermissions": "Mikrofons, kamera un citas CloudChat atļaujas",
   "@otherCallingPermissions": {},
   "messagesStyle": "Ziņas:",
   "@messagesStyle": {},
@@ -498,7 +498,7 @@
   "@newSpaceDescription": {},
   "chatDescription": "Tērzēšanas apraksts",
   "@chatDescription": {},
-  "callingAccountDetails": "Ļauj FluffyChat izmantot iebūvēto Android zvanīšanas lietotni.",
+  "callingAccountDetails": "Ļauj CloudChat izmantot iebūvēto Android zvanīšanas lietotni.",
   "@callingAccountDetails": {},
   "next": "Nākamais",
   "@next": {
@@ -650,7 +650,7 @@
     "type": "text",
     "placeholders": {}
   },
-  "inviteText": "{username} uzaicināja pievienoties FluffyChat.\n1. Jāapmeklē fluffychat.im un jāuzstāda lietotne \n2. Jāizveido konts vai jāpiesakās \n3. Jāatver uzaicinājuma saite: \n {link}",
+  "inviteText": "{username} uzaicināja pievienoties CloudChat.\n1. Jāapmeklē cloudchat.im un jāuzstāda lietotne \n2. Jāizveido konts vai jāpiesakās \n3. Jāatver uzaicinājuma saite: \n {link}",
   "@inviteText": {
     "type": "text",
     "placeholders": {
@@ -1060,8 +1060,8 @@
     "type": "text",
     "placeholders": {}
   },
-  "newMessageInFluffyChat": "💬 Jauna ziņa FluffyChat",
-  "@newMessageInFluffyChat": {
+  "newMessageInCloudChat": "💬 Jauna ziņa CloudChat",
+  "@newMessageInCloudChat": {
     "type": "text",
     "placeholders": {}
   },
@@ -1365,7 +1365,7 @@
     "type": "text",
     "placeholders": {}
   },
-  "appearOnTopDetails": "Ļauj lietotnei parādīties virspusē (nav nepieciešams, ja FluffyChat jau ir iestatīts kā zvanīšanas konts)",
+  "appearOnTopDetails": "Ļauj lietotnei parādīties virspusē (nav nepieciešams, ja CloudChat jau ir iestatīts kā zvanīšanas konts)",
   "@appearOnTopDetails": {},
   "roomHasBeenUpgraded": "Istaba tika atjaunināta",
   "@roomHasBeenUpgraded": {
@@ -1608,8 +1608,8 @@
   },
   "unverified": "Neapliecināta",
   "@unverified": {},
-  "fluffychat": "FluffyChat",
-  "@fluffychat": {
+  "cloudchat": "CloudChat",
+  "@cloudchat": {
     "type": "text",
     "placeholders": {}
   },
@@ -2367,7 +2367,7 @@
   },
   "pinMessage": "Piespraust istabai",
   "@pinMessage": {},
-  "screenSharingDetail": "Tu kopīgo savu ekrānu FluffyChat",
+  "screenSharingDetail": "Tu kopīgo savu ekrānu CloudChat",
   "@screenSharingDetail": {},
   "muteChat": "Apklusināt tērzēšanu",
   "@muteChat": {
@@ -2813,7 +2813,7 @@
   "@noticeChatBackupDeviceVerification": {},
   "continueText": "Turpināt",
   "@continueText": {},
-  "welcomeText": "Sveicieni! 👋 Šis ir FluffyChat. Tu vari pieteikties jebkurā mājasserverī, kas ir saderīgs ar https://matrix.org. Tad vari tērzēt ar ikvienu. Tas ir milzīgs decentralizētās saziņas tīkls!",
+  "welcomeText": "Sveicieni! 👋 Šis ir CloudChat. Tu vari pieteikties jebkurā mājasserverī, kas ir saderīgs ar https://matrix.org. Tad vari tērzēt ar ikvienu. Tas ir milzīgs decentralizētās saziņas tīkls!",
   "@welcomeText": {},
   "blur": "Aizmiglojums:",
   "@blur": {},

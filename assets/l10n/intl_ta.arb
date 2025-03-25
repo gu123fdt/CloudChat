@@ -836,7 +836,7 @@
         "type": "text",
         "placeholders": {}
     },
-      "@newMessageInFluffyChat": {
+      "@newMessageInCloudChat": {
         "type": "text",
         "placeholders": {}
     },
@@ -1253,7 +1253,7 @@
         "placeholders": {}
     },
       "@unverified": {},
-      "@fluffychat": {
+      "@cloudchat": {
         "type": "text",
         "placeholders": {}
     },

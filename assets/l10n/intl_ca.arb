@@ -552,8 +552,8 @@
     "type": "text",
     "placeholders": {}
   },
-  "fluffychat": "FluffyChat",
-  "@fluffychat": {
+  "cloudchat": "CloudChat",
+  "@cloudchat": {
     "type": "text",
     "placeholders": {}
   },
@@ -682,7 +682,7 @@
     "type": "text",
     "placeholders": {}
   },
-  "inviteText": "{username} t'ha convidat a FluffyChat.\n1. Visita fluffychat.im i instaŀla l'app\n2. Registra't o inicia sessió\n3. Obre l'enllaç d'invitació:\n{link}",
+  "inviteText": "{username} t'ha convidat a CloudChat.\n1. Visita cloudchat.im i instaŀla l'app\n2. Registra't o inicia sessió\n3. Obre l'enllaç d'invitació:\n{link}",
   "@inviteText": {
     "type": "text",
     "placeholders": {
@@ -824,8 +824,8 @@
     "type": "text",
     "placeholders": {}
   },
-  "newMessageInFluffyChat": "💬 Missatge nou al FluffyChat",
-  "@newMessageInFluffyChat": {
+  "newMessageInCloudChat": "💬 Missatge nou al CloudChat",
+  "@newMessageInCloudChat": {
     "type": "text",
     "placeholders": {}
   },
@@ -849,7 +849,7 @@
     "type": "text",
     "placeholders": {}
   },
-  "noGoogleServicesWarning": "Sembla que no teniu els Serveis de Google al telèfon. Això és una bona decisió respecte a la vostra privadesa! Per a rebre notificacions automàtiques del FluffyChat, us recomanem instaŀlar ntfy. Amb ntfy o qualsevol altre proveïdor de Unified Push, pots rebre notificacions de forma segura i lliure. Pots instaŀlar ntfy des de la PlayStore o des de F-Droid.",
+  "noGoogleServicesWarning": "Sembla que no teniu els Serveis de Google al telèfon. Això és una bona decisió respecte a la vostra privadesa! Per a rebre notificacions automàtiques del CloudChat, us recomanem instaŀlar ntfy. Amb ntfy o qualsevol altre proveïdor de Unified Push, pots rebre notificacions de forma segura i lliure. Pots instaŀlar ntfy des de la PlayStore o des de F-Droid.",
   "@noGoogleServicesWarning": {
     "type": "text",
     "placeholders": {}
@@ -1266,7 +1266,7 @@
     "type": "text",
     "placeholders": {}
   },
-  "title": "FluffyChat",
+  "title": "CloudChat",
   "@title": {
     "description": "Title for the application",
     "type": "text",
@@ -1900,7 +1900,7 @@
   "@widgetJitsi": {},
   "messageType": "Tipus de missatge",
   "@messageType": {},
-  "indexedDbErrorLong": "L'emmagatzematge de missatges no està disponible per defecte en el mode privat.\nVisita\n - about:config\n - posa a true l'opció dom.indexedDB.privateBrowsing.enabled\nSi no ho fas, no podràs fer servir FluffyChat en mode privat.",
+  "indexedDbErrorLong": "L'emmagatzematge de missatges no està disponible per defecte en el mode privat.\nVisita\n - about:config\n - posa a true l'opció dom.indexedDB.privateBrowsing.enabled\nSi no ho fas, no podràs fer servir CloudChat en mode privat.",
   "@indexedDbErrorLong": {},
   "oneClientLoggedOut": "Una de les teves aplicacions ha tancat la sessió",
   "@oneClientLoggedOut": {},
@@ -1962,7 +1962,7 @@
   "@unbanUserDescription": {},
   "youRejectedTheInvitation": "Has rebutjat la invitació",
   "@youRejectedTheInvitation": {},
-  "otherCallingPermissions": "Micròfon, càmera i altres permisos del FluffyChat",
+  "otherCallingPermissions": "Micròfon, càmera i altres permisos del CloudChat",
   "@otherCallingPermissions": {},
   "messagesStyle": "Missatges:",
   "@messagesStyle": {},
@@ -1974,7 +1974,7 @@
   "@newSpaceDescription": {},
   "chatDescription": "Descripció del xat",
   "@chatDescription": {},
-  "callingAccountDetails": "Permet al FluffyChat de fer servir l'app de trucades nativa de l'Android.",
+  "callingAccountDetails": "Permet al CloudChat de fer servir l'app de trucades nativa de l'Android.",
   "@callingAccountDetails": {},
   "editRoomAliases": "Canvia els àlies de la sala",
   "@editRoomAliases": {
@@ -2141,7 +2141,7 @@
       "user": {}
     }
   },
-  "appearOnTopDetails": "Permet a l'app que aparegui sobre d'altres apps. No cal si ja has afegit FluffyChat com a compte de trucades",
+  "appearOnTopDetails": "Permet a l'app que aparegui sobre d'altres apps. No cal si ja has afegit CloudChat com a compte de trucades",
   "@appearOnTopDetails": {},
   "enterRoom": "Entra a la sala",
   "@enterRoom": {},
@@ -2414,7 +2414,7 @@
   "@unsupportedAndroidVersionLong": {},
   "storeSecurlyOnThisDevice": "Desa de forma segura en aquest dispositiu",
   "@storeSecurlyOnThisDevice": {},
-  "screenSharingDetail": "Estàs compartint la teva pantalla a FluffyChat",
+  "screenSharingDetail": "Estàs compartint la teva pantalla a CloudChat",
   "@screenSharingDetail": {},
   "placeCall": "Truca",
   "@placeCall": {},

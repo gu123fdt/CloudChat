@@ -8,32 +8,33 @@ import 'package:flutter/services.dart';
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:cross_file/cross_file.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
-import 'package:flutter_shortcuts/flutter_shortcuts.dart';
+import 'package:flutter_shortcuts_new/flutter_shortcuts_new.dart';
 import 'package:go_router/go_router.dart';
+import 'package:cloudchat/utils/thread_unread_data.dart';
 import 'package:matrix/matrix.dart' as sdk;
 import 'package:matrix/matrix.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'package:uni_links/uni_links.dart';
 
-import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/pages/chat_list/chat_list_view.dart';
-import 'package:fluffychat/utils/localized_exception_extension.dart';
-import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
-import 'package:fluffychat/utils/platform_infos.dart';
-import 'package:fluffychat/utils/show_scaffold_dialog.dart';
-import 'package:fluffychat/utils/show_update_snackbar.dart';
-import 'package:fluffychat/widgets/avatar.dart';
-import 'package:fluffychat/widgets/future_loading_dialog.dart';
-import 'package:fluffychat/widgets/share_scaffold_dialog.dart';
+import 'package:cloudchat/config/app_config.dart';
+import 'package:cloudchat/pages/chat_list/chat_list_view.dart';
+import 'package:cloudchat/utils/localized_exception_extension.dart';
+import 'package:cloudchat/utils/matrix_sdk_extensions/matrix_locals.dart';
+import 'package:cloudchat/utils/platform_infos.dart';
+import 'package:cloudchat/utils/show_scaffold_dialog.dart';
+import 'package:cloudchat/utils/show_update_snackbar.dart';
+import 'package:cloudchat/widgets/avatar.dart';
+import 'package:cloudchat/widgets/future_loading_dialog.dart';
+import 'package:cloudchat/widgets/share_scaffold_dialog.dart';
 import '../../../utils/account_bundles.dart';
 import '../../config/setting_keys.dart';
 import '../../utils/url_launcher.dart';
 import '../../utils/voip/callkeep_manager.dart';
-import '../../widgets/fluffy_chat_app.dart';
+import '../../widgets/cloud_chat_app.dart';
 import '../../widgets/matrix.dart';
 import '../bootstrap/bootstrap_dialog.dart';
 
-import 'package:fluffychat/utils/tor_stub.dart'
+import 'package:cloudchat/utils/tor_stub.dart'
     if (dart.library.html) 'package:tor_detector_web/tor_detector_web.dart';
 
 enum PopupMenuAction {
@@ -51,6 +52,7 @@ enum ActiveFilter {
   groups,
   unread,
   spaces,
+  pinned,
 }
 
 extension LocalizedActiveFilter on ActiveFilter {
@@ -66,6 +68,8 @@ extension LocalizedActiveFilter on ActiveFilter {
         return L10n.of(context).groups;
       case ActiveFilter.spaces:
         return L10n.of(context).spaces;
+      case ActiveFilter.pinned:
+        return L10n.of(context).pinned;
     }
   }
 }
@@ -92,6 +96,10 @@ class ChatListController extends State<ChatList>
   StreamSubscription? _intentFileStreamSubscription;
 
   StreamSubscription? _intentUriStreamSubscription;
+
+  List<String> isMentionRooms = [];
+
+  ThreadUnreadData threadUnreadData = ThreadUnreadData();
 
   ActiveFilter activeFilter = AppConfig.separateChatTypes
       ? ActiveFilter.messages
@@ -192,19 +200,67 @@ class ChatListController extends State<ChatList>
     context.go('/rooms/${room.id}');
   }
 
-  bool Function(Room) getRoomFilterByActiveFilter(ActiveFilter activeFilter) {
-    switch (activeFilter) {
-      case ActiveFilter.allChats:
-        return (room) => true;
-      case ActiveFilter.messages:
-        return (room) => !room.isSpace && room.isDirectChat;
-      case ActiveFilter.groups:
-        return (room) => !room.isSpace && !room.isDirectChat;
-      case ActiveFilter.unread:
-        return (room) => room.isUnreadOrInvited;
-      case ActiveFilter.spaces:
-        return (room) => room.isSpace;
+  void setIsMentionRoom(Room room) async {
+    if (room.notificationCount > 0) {
+      final timeline = await room.getTimeline();
+
+      timeline.requestKeys(onlineKeyBackupOnly: false);
+      final unreadCount = room.notificationCount;
+
+      for (int i = 0; i < unreadCount; i++) {
+        try {
+          final event = timeline.chunk.events[i];
+
+          if (event.body.contains("@room") ||
+              (event.content['formatted_body'] as String)
+                  .contains(room.client.userID!) ||
+              (event.content['formatted_body'] as String).contains("@room")) {
+            if (!isMentionRooms.contains(room.id)) {
+              setState(() {
+                isMentionRooms.add(room.id);
+              });
+            }
+          } else if (isMentionRooms.contains(room.id)) {
+            setState(() {
+              isMentionRooms.remove(room.id);
+            });
+          }
+        } catch (_) {
+          if (isMentionRooms.contains(room.id)) {
+            setState(() {
+              isMentionRooms.remove(room.id);
+            });
+          }
+        }
+      }
+    } else {
+      if (isMentionRooms.contains(room.id)) {
+        setState(() {
+          isMentionRooms.remove(room.id);
+        });
+      }
     }
+  }
+
+  bool Function(Room) getRoomFilterByActiveFilter(ActiveFilter activeFilter) {
+    return (room) {
+      setIsMentionRoom(room);
+
+      switch (activeFilter) {
+        case ActiveFilter.allChats:
+          return true;
+        case ActiveFilter.messages:
+          return !room.isSpace && room.isDirectChat;
+        case ActiveFilter.groups:
+          return !room.isSpace && !room.isDirectChat;
+        case ActiveFilter.unread:
+          return room.isUnreadOrInvited;
+        case ActiveFilter.spaces:
+          return room.isSpace;
+        case ActiveFilter.pinned:
+          return room.isFavourite;
+      }
+    };
   }
 
   List<Room> get filteredRooms => Matrix.of(context)
@@ -221,7 +277,7 @@ class ChatListController extends State<ChatList>
   QueryPublicRoomsResponse? roomSearchResult;
 
   bool isSearching = false;
-  static const String _serverStoreNamespace = 'im.fluffychat.search.server';
+  static const String _serverStoreNamespace = 'im.cloudchat.search.server';
 
   void setServer() async {
     final newServer = await showTextInputDialog(
@@ -431,8 +487,8 @@ class ChatListController extends State<ChatList>
 
     // For receiving shared Uris
     _intentUriStreamSubscription = linkStream.listen(_processIncomingUris);
-    if (FluffyChatApp.gotInitialLink == false) {
-      FluffyChatApp.gotInitialLink = true;
+    if (CloudChatApp.gotInitialLink == false) {
+      CloudChatApp.gotInitialLink = true;
       getInitialLink().then(_processIncomingUris);
     }
 
@@ -617,7 +673,7 @@ class ChatListController extends State<ChatList>
             ],
           ),
         ),
-        if (spacesWithPowerLevels.isNotEmpty)
+        if (spacesWithPowerLevels.isNotEmpty && !room.isSpace)
           PopupMenuItem(
             value: ChatContextAction.addToSpace,
             child: Row(

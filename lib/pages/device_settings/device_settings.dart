@@ -6,9 +6,9 @@ import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:matrix/encryption/utils/key_verification.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/pages/device_settings/device_settings_view.dart';
-import 'package:fluffychat/pages/key_verification/key_verification_dialog.dart';
-import 'package:fluffychat/widgets/future_loading_dialog.dart';
+import 'package:cloudchat/pages/device_settings/device_settings_view.dart';
+import 'package:cloudchat/pages/key_verification/key_verification_dialog.dart';
+import 'package:cloudchat/widgets/future_loading_dialog.dart';
 import '../../widgets/matrix.dart';
 
 class DevicesSettings extends StatefulWidget {

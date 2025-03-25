@@ -1,6 +1,6 @@
 {
-    "name": "FluffyChat",
-    "short_name": "FluffyChat",
+    "name": "CloudChat",
+    "short_name": "CloudChat",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

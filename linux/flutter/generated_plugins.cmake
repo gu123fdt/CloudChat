@@ -3,6 +3,7 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  audioplayers_linux
   desktop_drop
   dynamic_color
   emoji_picker_flutter
@@ -10,14 +11,19 @@ list(APPEND FLUTTER_PLUGIN_LIST
   flutter_secure_storage_linux
   flutter_webrtc
   handy_window
+  local_notifier
   pasteboard
   record_linux
+  screen_retriever_linux
   sqlcipher_flutter_libs
+  tray_manager
   url_launcher_linux
+  window_manager
   window_to_front
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST
+  ogg_opus_player
 )
 
 set(PLUGIN_BUNDLED_LIBRARIES)

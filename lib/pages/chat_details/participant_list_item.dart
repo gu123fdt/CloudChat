@@ -3,15 +3,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/utils/adaptive_bottom_sheet.dart';
+import 'package:cloudchat/config/app_config.dart';
+import 'package:cloudchat/utils/adaptive_bottom_sheet.dart';
 import '../../widgets/avatar.dart';
 import '../user_bottom_sheet/user_bottom_sheet.dart';
 
 class ParticipantListItem extends StatelessWidget {
   final User user;
+  final bool? isSelectable;
+  final bool? isSelected;
+  final void Function(User)? onSelect;
 
-  const ParticipantListItem(this.user, {super.key});
+  const ParticipantListItem(
+    this.user, {
+    this.isSelectable = false,
+    this.onSelect,
+    this.isSelected = false,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -34,13 +43,15 @@ class ParticipantListItem extends StatelessWidget {
     return Opacity(
       opacity: user.membership == Membership.join ? 1 : 0.5,
       child: ListTile(
-        onTap: () => showAdaptiveBottomSheet(
-          context: context,
-          builder: (c) => UserBottomSheet(
-            user: user,
-            outerContext: context,
-          ),
-        ),
+        onTap: isSelectable == true
+            ? () => onSelect!(user)
+            : () => showAdaptiveBottomSheet(
+                  context: context,
+                  builder: (c) => UserBottomSheet(
+                    user: user,
+                    outerContext: context,
+                  ),
+                ),
         title: Row(
           children: <Widget>[
             Expanded(
@@ -91,11 +102,18 @@ class ParticipantListItem extends StatelessWidget {
           ],
         ),
         subtitle: Text(user.id),
-        leading: Avatar(
-          mxContent: user.avatarUrl,
-          name: user.calcDisplayname(),
-          presenceUserId: user.stateKey,
-        ),
+        leading: isSelected == true
+            ? Checkbox(
+                value: isSelected,
+                onChanged: (bool? newValue) {
+                  onSelect!(user);
+                },
+              )
+            : Avatar(
+                mxContent: user.avatarUrl,
+                name: user.calcDisplayname(),
+                presenceUserId: user.stateKey,
+              ),
       ),
     );
   }
