@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloudchat/utils/locale_provider.dart';
 import 'package:flutter/material.dart';
 
 import 'package:adaptive_dialog/adaptive_dialog.dart';
@@ -8,9 +9,10 @@ import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/utils/file_selector.dart';
-import 'package:fluffychat/utils/platform_infos.dart';
-import 'package:fluffychat/widgets/future_loading_dialog.dart';
+import 'package:cloudchat/utils/file_selector.dart';
+import 'package:cloudchat/utils/platform_infos.dart';
+import 'package:cloudchat/widgets/future_loading_dialog.dart';
+import 'package:provider/provider.dart';
 import '../../widgets/matrix.dart';
 import '../bootstrap/bootstrap_dialog.dart';
 import 'settings_view.dart';
@@ -60,18 +62,21 @@ class SettingsController extends State<Settings> {
 
   void logoutAction() async {
     final noBackup = showChatBackupBanner == true;
-    if (await showOkCancelAlertDialog(
-          useRootNavigator: false,
-          context: context,
-          title: L10n.of(context).areYouSureYouWantToLogout,
-          message: L10n.of(context).noBackupWarning,
-          isDestructiveAction: noBackup,
-          okLabel: L10n.of(context).logout,
-          cancelLabel: L10n.of(context).cancel,
-        ) ==
-        OkCancelResult.cancel) {
-      return;
+    if (showChatBackupBanner == true) {
+      if (await showOkCancelAlertDialog(
+            useRootNavigator: false,
+            context: context,
+            title: L10n.of(context).areYouSureYouWantToLogout,
+            message: L10n.of(context).noBackupWarning,
+            isDestructiveAction: noBackup,
+            okLabel: L10n.of(context).logout,
+            cancelLabel: L10n.of(context).cancel,
+          ) ==
+          OkCancelResult.cancel) {
+        return;
+      }
     }
+
     final matrix = Matrix.of(context);
     await showFutureLoadingDialog(
       context: context,
@@ -199,6 +204,11 @@ class SettingsController extends State<Settings> {
       client: Matrix.of(context).client,
     ).show(context);
     checkBootstrap();
+  }
+
+  void selectLanguage(String? languageCode) {
+    final localeProvider = Provider.of<LocaleProvider>(context, listen: false);
+    localeProvider.setLocale(Locale(languageCode!));
   }
 
   Future<String?> getOidcAccountManageUrl() async {

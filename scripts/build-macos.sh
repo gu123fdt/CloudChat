@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 git apply ./scripts/enable-android-google-services.patch
-FLUFFYCHAT_ORIG_GROUP="im.fluffychat"
-FLUFFYCHAT_ORIG_TEAM="4NXF6Z997G"
-#FLUFFYCHAT_NEW_GROUP="com.example.fluffychat"
-#FLUFFYCHAT_NEW_TEAM="ABCDE12345"
+CLOUDCHAT_ORIG_GROUP="im.cloudchat"
+CLOUDCHAT_ORIG_TEAM="4NXF6Z997G"
+#CLOUDCHAT_NEW_GROUP="com.example.cloudchat"
+#CLOUDCHAT_NEW_TEAM="ABCDE12345"
 
 # In some cases (ie: running beta XCode releases) some pods haven't updated their minimum version
 # but XCode will reject the package for using too old of a minimum version. 
@@ -11,25 +11,25 @@ FLUFFYCHAT_ORIG_TEAM="4NXF6Z997G"
 # export I_PROMISE_IM_REALLY_SMART=1
 
 # If you want to automatically install the app
-# export FLUFFYCHAT_INSTALL_IPA=1
+# export CLOUDCHAT_INSTALL_IPA=1
 
 ### Rotate IDs ###
-[ -n "${FLUFFYCHAT_NEW_GROUP}" ] && {
+[ -n "${CLOUDCHAT_NEW_GROUP}" ] && {
 	# App group IDs
-	sed -i "" "s/group.${FLUFFYCHAT_ORIG_GROUP}.app/group.${FLUFFYCHAT_NEW_GROUP}.app/g" "macos/Runner/Runner.entitlements"
-	sed -i "" "s/group.${FLUFFYCHAT_ORIG_GROUP}.app/group.${FLUFFYCHAT_NEW_GROUP}.app/g" "macos/Runner.xcodeproj/project.pbxproj"
+	sed -i "" "s/group.${CLOUDCHAT_ORIG_GROUP}.app/group.${CLOUDCHAT_NEW_GROUP}.app/g" "macos/Runner/Runner.entitlements"
+	sed -i "" "s/group.${CLOUDCHAT_ORIG_GROUP}.app/group.${CLOUDCHAT_NEW_GROUP}.app/g" "macos/Runner.xcodeproj/project.pbxproj"
 	# Bundle identifiers
-	sed -i "" "s/${FLUFFYCHAT_ORIG_GROUP}.app/${FLUFFYCHAT_NEW_GROUP}.app/g" "macos/Runner.xcodeproj/project.pbxproj"
+	sed -i "" "s/${CLOUDCHAT_ORIG_GROUP}.app/${CLOUDCHAT_NEW_GROUP}.app/g" "macos/Runner.xcodeproj/project.pbxproj"
 }
 
-[ -n "${FLUFFYCHAT_NEW_TEAM}" ] && {
+[ -n "${CLOUDCHAT_NEW_TEAM}" ] && {
 	# Code signing team
-	sed -i "" "s/${FLUFFYCHAT_ORIG_TEAM}/${FLUFFYCHAT_NEW_TEAM}/g" "macos/Runner.xcodeproj/project.pbxproj"
+	sed -i "" "s/${CLOUDCHAT_ORIG_TEAM}/${CLOUDCHAT_NEW_TEAM}/g" "macos/Runner.xcodeproj/project.pbxproj"
 }
 
 ### Make release build ###
 flutter build macos --release
 
-cp /usr/local/Cellar/libolm/**/lib/libolm.3.dylib build/macos/Build/Products/Release/FluffyChat.app/Contents/Frameworks/libolm.3.dylib
+cp /usr/local/Cellar/libolm/**/lib/libolm.3.dylib build/macos/Build/Products/Release/CloudChat.app/Contents/Frameworks/libolm.3.dylib
 
-echo "Build build/macos/Build/Products/Release/FluffyChat.app"
+echo "Build build/macos/Build/Products/Release/CloudChat.app"

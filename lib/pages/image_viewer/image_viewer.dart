@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/pages/image_viewer/image_viewer_view.dart';
-import 'package:fluffychat/utils/platform_infos.dart';
-import 'package:fluffychat/utils/show_scaffold_dialog.dart';
-import 'package:fluffychat/widgets/share_scaffold_dialog.dart';
+import 'package:cloudchat/pages/image_viewer/image_viewer_view.dart';
+import 'package:cloudchat/utils/platform_infos.dart';
+import 'package:cloudchat/utils/show_scaffold_dialog.dart';
+import 'package:cloudchat/widgets/share_scaffold_dialog.dart';
 import '../../utils/matrix_sdk_extensions/event_extension.dart';
 
 class ImageViewer extends StatefulWidget {
@@ -26,6 +27,23 @@ class ImageViewerController extends State<ImageViewer> {
           items: [ContentShareItem(widget.event.content)],
         ),
       );
+
+  void goToMessage() {
+    Navigator.of(context).pop();
+
+    context.go(
+      '/${Uri(
+        pathSegments: ['rooms', widget.event.roomId!],
+        queryParameters: {
+          'event': widget.event.eventId,
+        },
+      )}',
+      extra: {
+        'from':
+            GoRouter.of(context).routeInformationProvider.value.uri.toString(),
+      },
+    );
+  }
 
   /// Save this file with a system call.
   void saveFileAction(BuildContext context) => widget.event.saveFile(context);

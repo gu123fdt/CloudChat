@@ -430,8 +430,8 @@
         "type": "text",
         "placeholders": {}
     },
-    "fluffychat": "FluffyChat",
-    "@fluffychat": {
+    "cloudchat": "CloudChat",
+    "@cloudchat": {
         "type": "text",
         "placeholders": {}
     },
@@ -535,7 +535,7 @@
         "type": "text",
         "placeholders": {}
     },
-    "inviteText": "{username} vás pozval na FluffyChat.\n1. Nainštalujte si FluffyChat: https://fluffychat.im\n2. Zaregistrujte sa alebo sa prihláste\n3. Otvorte odkaz na pozvánku: {link}",
+    "inviteText": "{username} vás pozval na CloudChat.\n1. Nainštalujte si CloudChat: https://cloudchat.im\n2. Zaregistrujte sa alebo sa prihláste\n3. Otvorte odkaz na pozvánku: {link}",
     "@inviteText": {
         "type": "text",
         "placeholders": {
@@ -652,8 +652,8 @@
         "type": "text",
         "placeholders": {}
     },
-    "newMessageInFluffyChat": "Nová správa v FluffyChate",
-    "@newMessageInFluffyChat": {
+    "newMessageInCloudChat": "Nová správa v CloudChate",
+    "@newMessageInCloudChat": {
         "type": "text",
         "placeholders": {}
     },
@@ -667,7 +667,7 @@
         "type": "text",
         "placeholders": {}
     },
-    "noGoogleServicesWarning": "Zdá sa, že nemáte žiadne služby Googlu v telefóne. To je dobré rozhodnutie pre vaše súkromie! Ak chcete dostávať push notifikácie vo FluffyChat, odporúčame používať microG: https://microg.org/.",
+    "noGoogleServicesWarning": "Zdá sa, že nemáte žiadne služby Googlu v telefóne. To je dobré rozhodnutie pre vaše súkromie! Ak chcete dostávať push notifikácie vo CloudChat, odporúčame používať microG: https://microg.org/.",
     "@noGoogleServicesWarning": {
         "type": "text",
         "placeholders": {}
@@ -949,7 +949,7 @@
         "type": "text",
         "placeholders": {}
     },
-    "title": "FluffyChat",
+    "title": "CloudChat",
     "@title": {
         "description": "Title for the application",
         "type": "text",

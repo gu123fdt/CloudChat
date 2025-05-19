@@ -3,17 +3,25 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  audioplayers_linux
   desktop_drop
+  desktop_webview_window
   dynamic_color
   emoji_picker_flutter
   file_selector_linux
   flutter_secure_storage_linux
   flutter_webrtc
+  gtk
   handy_window
+  local_notifier
+  open_file_linux
   pasteboard
   record_linux
+  screen_retriever_linux
   sqlcipher_flutter_libs
+  tray_manager
   url_launcher_linux
+  window_manager
   window_to_front
 )
 

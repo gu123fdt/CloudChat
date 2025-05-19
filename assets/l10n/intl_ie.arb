@@ -1048,8 +1048,8 @@
     },
     "homeserver": "Hem-servitor",
     "@homeserver": {},
-    "fluffychat": "FluffyChat",
-    "@fluffychat": {
+    "cloudchat": "CloudChat",
+    "@cloudchat": {
         "type": "text",
         "placeholders": {}
     },
@@ -1090,7 +1090,7 @@
         "type": "text",
         "placeholders": {}
     },
-    "title": "FluffyChat",
+    "title": "CloudChat",
     "@title": {
         "description": "Title for the application",
         "type": "text",
@@ -1545,7 +1545,7 @@
             "rules": {}
         }
     },
-      "@newMessageInFluffyChat": {
+      "@newMessageInCloudChat": {
         "type": "text",
         "placeholders": {}
     },

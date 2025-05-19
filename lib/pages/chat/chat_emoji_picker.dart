@@ -4,8 +4,8 @@ import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/config/themes.dart';
-import 'package:fluffychat/pages/chat/sticker_picker_dialog.dart';
+import 'package:cloudchat/config/themes.dart';
+import 'package:cloudchat/pages/chat/sticker_picker_dialog.dart';
 import 'chat.dart';
 
 class ChatEmojiPicker extends StatelessWidget {
@@ -16,12 +16,12 @@ class ChatEmojiPicker extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return AnimatedContainer(
-      duration: FluffyThemes.animationDuration,
-      curve: FluffyThemes.animationCurve,
-      clipBehavior: Clip.hardEdge,
+      duration: CloudThemes.animationDuration,
+      curve: CloudThemes.animationCurve,
+      clipBehavior: Clip.antiAliasWithSaveLayer,
       decoration: const BoxDecoration(),
       height: controller.showEmojiPicker
-          ? MediaQuery.of(context).size.height / 2
+          ? MediaQuery.of(context).size.height / 4
           : 0,
       child: controller.showEmojiPicker
           ? DefaultTabController(
@@ -45,6 +45,7 @@ class ChatEmojiPicker extends StatelessWidget {
                               noRecents: const NoRecent(),
                               backgroundColor:
                                   theme.colorScheme.onInverseSurface,
+                              columns: 12,
                             ),
                             bottomActionBarConfig: const BottomActionBarConfig(
                               enabled: false,
@@ -63,6 +64,10 @@ class ChatEmojiPicker extends StatelessWidget {
                                 0.75,
                               )!,
                               indicatorColor: theme.colorScheme.onSurface,
+                            ),
+                            emojiTextStyle: const TextStyle(
+                              fontFamily: 'SegoeUIEmoji',
+                              fontSize: 24,
                             ),
                           ),
                         ),

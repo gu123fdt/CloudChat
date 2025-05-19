@@ -1,17 +1,19 @@
 import 'dart:math';
 
+import 'package:cloudchat/pages/chat/events/call_message.dart';
+import 'package:cloudchat/pages/chat/events/jitsi_message.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/pages/chat/events/video_player.dart';
-import 'package:fluffychat/utils/adaptive_bottom_sheet.dart';
-import 'package:fluffychat/utils/date_time_extension.dart';
-import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
-import 'package:fluffychat/widgets/avatar.dart';
-import 'package:fluffychat/widgets/matrix.dart';
+import 'package:cloudchat/pages/chat/events/video_player.dart';
+import 'package:cloudchat/utils/adaptive_bottom_sheet.dart';
+import 'package:cloudchat/utils/date_time_extension.dart';
+import 'package:cloudchat/utils/matrix_sdk_extensions/matrix_locals.dart';
+import 'package:cloudchat/widgets/avatar.dart';
+import 'package:cloudchat/widgets/matrix.dart';
 import '../../../config/app_config.dart';
 import '../../../utils/platform_infos.dart';
 import '../../../utils/url_launcher.dart';
@@ -28,6 +30,7 @@ class MessageContent extends StatelessWidget {
   final Color textColor;
   final void Function(Event)? onInfoTab;
   final BorderRadius borderRadius;
+  final bool isJitsi;
 
   const MessageContent(
     this.event, {
@@ -35,6 +38,7 @@ class MessageContent extends StatelessWidget {
     super.key,
     required this.textColor,
     required this.borderRadius,
+    required this.isJitsi,
   });
 
   void _verifyOrRequestKey(BuildContext context) async {
@@ -84,6 +88,24 @@ class MessageContent extends StatelessWidget {
                 subtitle: Text(event.originServerTs.localizedTime(context)),
                 trailing: const Icon(Icons.lock_outlined),
               ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8.0, top: 8.0),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: event.requestKey,
+                    icon: const Icon(Icons.lock_open),
+                    label: Text(L10n.of(context).tryDecipherMessages),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 12,
+                        horizontal: 24,
+                      ),
+                      textStyle: const TextStyle(fontSize: 18),
+                    ),
+                  ),
+                ),
+              ),
               const Divider(),
               Text(
                 event.calcLocalizedBodyFallback(
@@ -101,6 +123,7 @@ class MessageContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final fontSize = AppConfig.messageFontSize * AppConfig.fontSizeFactor;
     final buttonTextColor = textColor;
+
     switch (event.type) {
       case EventTypes.Message:
       case EventTypes.Encrypted:
@@ -143,7 +166,8 @@ class MessageContent extends StatelessWidget {
           case MessageTypes.Audio:
             if (PlatformInfos.isMobile ||
                     PlatformInfos.isMacOS ||
-                    PlatformInfos.isWeb
+                    PlatformInfos.isWeb ||
+                    PlatformInfos.isWindows
                 // Disabled until https://github.com/bleonard252/just_audio_mpv/issues/3
                 // is fixed
                 //   || PlatformInfos.isLinux
@@ -159,13 +183,23 @@ class MessageContent extends StatelessWidget {
             return EventVideoPlayer(event);
           case MessageTypes.File:
             return MessageDownloadContent(event, textColor);
-
           case MessageTypes.Text:
           case MessageTypes.Notice:
           case MessageTypes.Emote:
+            if (isJitsi) {
+              return JitsiMessage(
+                event,
+                textColor: textColor,
+              );
+            }
+
             if (AppConfig.renderHtml &&
                 !event.redacted &&
-                event.isRichMessage) {
+                event.isRichMessage &&
+                event.body.length > 1 &&
+                !event.formattedText
+                    .trim()
+                    .endsWith('</mx-reply><ul><li></li></ul>')) {
               var html = event.formattedText;
               if (event.messageType == MessageTypes.Emote) {
                 html = '* $html';
@@ -272,22 +306,10 @@ class MessageContent extends StatelessWidget {
               onOpen: (url) => UrlLauncher(context, url.url).launchUrl(),
             );
         }
+      case EventTypes.CallHangup:
+      case EventTypes.CallReject:
       case EventTypes.CallInvite:
-        return FutureBuilder<User?>(
-          future: event.fetchSenderUser(),
-          builder: (context, snapshot) {
-            return _ButtonContent(
-              label: L10n.of(context).startedACall(
-                snapshot.data?.calcDisplayname() ??
-                    event.senderFromMemoryOrFallback.calcDisplayname(),
-              ),
-              icon: '📞',
-              textColor: buttonTextColor,
-              onPressed: () => onInfoTab!(event),
-              fontSize: fontSize,
-            );
-          },
-        );
+        return CallMessage(event, textColor: textColor);
       default:
         return FutureBuilder<User?>(
           future: event.fetchSenderUser(),

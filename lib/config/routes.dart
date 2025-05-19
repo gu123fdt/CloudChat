@@ -4,38 +4,39 @@ import 'package:flutter/material.dart';
 
 import 'package:go_router/go_router.dart';
 
-import 'package:fluffychat/config/themes.dart';
-import 'package:fluffychat/pages/archive/archive.dart';
-import 'package:fluffychat/pages/chat/chat.dart';
-import 'package:fluffychat/pages/chat_access_settings/chat_access_settings_controller.dart';
-import 'package:fluffychat/pages/chat_details/chat_details.dart';
-import 'package:fluffychat/pages/chat_encryption_settings/chat_encryption_settings.dart';
-import 'package:fluffychat/pages/chat_list/chat_list.dart';
-import 'package:fluffychat/pages/chat_members/chat_members.dart';
-import 'package:fluffychat/pages/chat_permissions_settings/chat_permissions_settings.dart';
-import 'package:fluffychat/pages/chat_search/chat_search_page.dart';
-import 'package:fluffychat/pages/device_settings/device_settings.dart';
-import 'package:fluffychat/pages/homeserver_picker/homeserver_picker.dart';
-import 'package:fluffychat/pages/invitation_selection/invitation_selection.dart';
-import 'package:fluffychat/pages/login/login.dart';
-import 'package:fluffychat/pages/new_group/new_group.dart';
-import 'package:fluffychat/pages/new_private_chat/new_private_chat.dart';
-import 'package:fluffychat/pages/settings/settings.dart';
-import 'package:fluffychat/pages/settings_3pid/settings_3pid.dart';
-import 'package:fluffychat/pages/settings_chat/settings_chat.dart';
-import 'package:fluffychat/pages/settings_emotes/settings_emotes.dart';
-import 'package:fluffychat/pages/settings_homeserver/settings_homeserver.dart';
-import 'package:fluffychat/pages/settings_ignore_list/settings_ignore_list.dart';
-import 'package:fluffychat/pages/settings_multiple_emotes/settings_multiple_emotes.dart';
-import 'package:fluffychat/pages/settings_notifications/settings_notifications.dart';
-import 'package:fluffychat/pages/settings_password/settings_password.dart';
-import 'package:fluffychat/pages/settings_security/settings_security.dart';
-import 'package:fluffychat/pages/settings_style/settings_style.dart';
-import 'package:fluffychat/widgets/layouts/empty_page.dart';
-import 'package:fluffychat/widgets/layouts/two_column_layout.dart';
-import 'package:fluffychat/widgets/log_view.dart';
-import 'package:fluffychat/widgets/matrix.dart';
-import 'package:fluffychat/widgets/share_scaffold_dialog.dart';
+import 'package:cloudchat/config/themes.dart';
+import 'package:cloudchat/pages/all_threads/all_threads.dart';
+import 'package:cloudchat/pages/archive/archive.dart';
+import 'package:cloudchat/pages/chat/chat.dart';
+import 'package:cloudchat/pages/chat_access_settings/chat_access_settings_controller.dart';
+import 'package:cloudchat/pages/chat_details/chat_details.dart';
+import 'package:cloudchat/pages/chat_encryption_settings/chat_encryption_settings.dart';
+import 'package:cloudchat/pages/chat_list/chat_list.dart';
+import 'package:cloudchat/pages/chat_members/chat_members.dart';
+import 'package:cloudchat/pages/chat_permissions_settings/chat_permissions_settings.dart';
+import 'package:cloudchat/pages/chat_search/chat_search_page.dart';
+import 'package:cloudchat/pages/device_settings/device_settings.dart';
+import 'package:cloudchat/pages/homeserver_picker/homeserver_picker.dart';
+import 'package:cloudchat/pages/invitation_selection/invitation_selection.dart';
+import 'package:cloudchat/pages/login/login.dart';
+import 'package:cloudchat/pages/new_group/new_group.dart';
+import 'package:cloudchat/pages/new_private_chat/new_private_chat.dart';
+import 'package:cloudchat/pages/settings/settings.dart';
+import 'package:cloudchat/pages/settings_3pid/settings_3pid.dart';
+import 'package:cloudchat/pages/settings_chat/settings_chat.dart';
+import 'package:cloudchat/pages/settings_emotes/settings_emotes.dart';
+import 'package:cloudchat/pages/settings_homeserver/settings_homeserver.dart';
+import 'package:cloudchat/pages/settings_ignore_list/settings_ignore_list.dart';
+import 'package:cloudchat/pages/settings_multiple_emotes/settings_multiple_emotes.dart';
+import 'package:cloudchat/pages/settings_notifications/settings_notifications.dart';
+import 'package:cloudchat/pages/settings_password/settings_password.dart';
+import 'package:cloudchat/pages/settings_security/settings_security.dart';
+import 'package:cloudchat/pages/settings_style/settings_style.dart';
+import 'package:cloudchat/widgets/layouts/empty_page.dart';
+import 'package:cloudchat/widgets/layouts/two_column_layout.dart';
+import 'package:cloudchat/widgets/log_view.dart';
+import 'package:cloudchat/widgets/matrix.dart';
+import 'package:cloudchat/widgets/share_scaffold_dialog.dart';
 
 abstract class AppRoutes {
   static FutureOr<String?> loggedInRedirect(
@@ -55,8 +56,12 @@ abstract class AppRoutes {
   static final List<RouteBase> routes = [
     GoRoute(
       path: '/',
-      redirect: (context, state) =>
-          Matrix.of(context).client.isLogged() ? '/rooms' : '/home',
+      redirect: (context, state) {
+        if (Matrix.of(context).isAutoLoginAccountDetect()) {
+          return Matrix.of(context).autoLoginAccountRedirect();
+        }
+        return Matrix.of(context).client.isLogged() ? '/rooms' : '/home';
+      },
     ),
     GoRoute(
       path: '/home',
@@ -90,7 +95,7 @@ abstract class AppRoutes {
       pageBuilder: (context, state, child) => defaultPageBuilder(
         context,
         state,
-        FluffyThemes.isColumnMode(context) &&
+        CloudThemes.isColumnMode(context) &&
                 state.fullPath?.startsWith('/rooms/settings') == false
             ? TwoColumnLayout(
                 displayNavigationRail:
@@ -111,13 +116,26 @@ abstract class AppRoutes {
           pageBuilder: (context, state) => defaultPageBuilder(
             context,
             state,
-            FluffyThemes.isColumnMode(context)
+            CloudThemes.isColumnMode(context)
                 ? const EmptyPage()
                 : ChatList(
                     activeChat: state.pathParameters['roomid'],
                   ),
           ),
           routes: [
+            GoRoute(
+              path: 'threads',
+              pageBuilder: (context, state) => defaultPageBuilder(
+                context,
+                state,
+                AllThreads(
+                  roomId: state.uri.queryParameters['roomId'],
+                  roomsSearch: state.uri.queryParameters['roomsSearch'],
+                  threadsSearch: state.uri.queryParameters['threadsSearch'],
+                ),
+              ),
+              redirect: loggedOutRedirect,
+            ),
             GoRoute(
               path: 'archive',
               pageBuilder: (context, state) => defaultPageBuilder(
@@ -168,11 +186,23 @@ abstract class AppRoutes {
               ),
               redirect: loggedOutRedirect,
             ),
+            GoRoute(
+              path: 'global_search',
+              pageBuilder: (context, state) => defaultPageBuilder(
+                context,
+                state,
+                ChatSearchPage(
+                  isGlobal: true,
+                  searchQuery: state.uri.queryParameters['search'],
+                ),
+              ),
+              redirect: loggedOutRedirect,
+            ),
             ShellRoute(
               pageBuilder: (context, state, child) => defaultPageBuilder(
                 context,
                 state,
-                FluffyThemes.isColumnMode(context)
+                CloudThemes.isColumnMode(context)
                     ? TwoColumnLayout(
                         mainView: const Settings(),
                         sideView: child,
@@ -186,7 +216,7 @@ abstract class AppRoutes {
                   pageBuilder: (context, state) => defaultPageBuilder(
                     context,
                     state,
-                    FluffyThemes.isColumnMode(context)
+                    CloudThemes.isColumnMode(context)
                         ? const EmptyPage()
                         : const Settings(),
                   ),
@@ -328,6 +358,9 @@ abstract class AppRoutes {
                   shareItems ??= [];
                   shareItems.add(TextShareItem(body));
                 }
+
+                final from = (state.extra as Map?)?['from'];
+
                 return defaultPageBuilder(
                   context,
                   state,
@@ -335,6 +368,9 @@ abstract class AppRoutes {
                     roomId: state.pathParameters['roomid']!,
                     shareItems: shareItems,
                     eventId: state.uri.queryParameters['event'],
+                    thread: state.uri.queryParameters['thread'],
+                    eventIdInThread: state.uri.queryParameters['threadEvent'],
+                    from: from,
                   ),
                 );
               },
@@ -466,7 +502,7 @@ abstract class AppRoutes {
     GoRouterState state,
     Widget child,
   ) =>
-      FluffyThemes.isColumnMode(context)
+      CloudThemes.isColumnMode(context)
           ? NoTransitionPage(
               key: state.pageKey,
               restorationId: state.pageKey.value,

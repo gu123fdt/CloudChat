@@ -144,8 +144,8 @@
             "username": {}
         }
     },
-    "fluffychat": "FluffyChat",
-    "@fluffychat": {
+    "cloudchat": "CloudChat",
+    "@cloudchat": {
         "type": "text",
         "placeholders": {}
     },
@@ -980,7 +980,7 @@
         }
     },
       "@callingPermissions": {},
-      "@newMessageInFluffyChat": {
+      "@newMessageInCloudChat": {
         "type": "text",
         "placeholders": {}
     },

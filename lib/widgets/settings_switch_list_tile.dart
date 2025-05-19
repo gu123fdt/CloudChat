@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'matrix.dart';
 
 class SettingsSwitchListTile extends StatefulWidget {

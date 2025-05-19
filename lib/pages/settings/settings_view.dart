@@ -5,11 +5,11 @@ import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
-import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/utils/fluffy_share.dart';
-import 'package:fluffychat/utils/platform_infos.dart';
-import 'package:fluffychat/widgets/avatar.dart';
-import 'package:fluffychat/widgets/matrix.dart';
+import 'package:cloudchat/config/app_config.dart';
+import 'package:cloudchat/utils/cloud_share.dart';
+import 'package:cloudchat/utils/platform_infos.dart';
+import 'package:cloudchat/widgets/avatar.dart';
+import 'package:cloudchat/widgets/matrix.dart';
 import 'settings.dart';
 
 class SettingsView extends StatelessWidget {
@@ -98,7 +98,7 @@ class SettingsView extends StatelessWidget {
                               ),
                               TextButton.icon(
                                 onPressed: () =>
-                                    FluffyShare.share(mxid, context),
+                                    CloudShare.share(mxid, context),
                                 icon: const Icon(
                                   Icons.copy_outlined,
                                   size: 14,
@@ -172,6 +172,40 @@ class SettingsView extends StatelessWidget {
                   leading: const Icon(Icons.shield_outlined),
                   title: Text(L10n.of(context).security),
                   onTap: () => context.go('/rooms/settings/security'),
+                ),
+                Divider(
+                  color: theme.dividerColor,
+                ),
+                DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    padding: const EdgeInsets.only(left: 24.0, right: 24.0),
+                    value: Localizations.localeOf(context).languageCode,
+                    items: [
+                      {"en", "English"},
+                      {"uk", "Українська"},
+                      {"ru", "Русский"},
+                    ].map<DropdownMenuItem<String>>((locale) {
+                      return DropdownMenuItem<String>(
+                        value: locale.first,
+                        child: Row(
+                          children: [
+                            Image.asset(
+                              'assets/${locale.first}.png',
+                              width: 24,
+                              height: 16,
+                              fit: BoxFit.cover,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(locale.last),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                    onChanged: (String? languageCode) {
+                      controller.selectLanguage(languageCode);
+                      FocusScope.of(context).requestFocus(FocusNode());
+                    },
+                  ),
                 ),
                 Divider(color: theme.dividerColor),
                 ListTile(

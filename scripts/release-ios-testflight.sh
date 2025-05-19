@@ -1,7 +1,7 @@
 #!/bin/sh -ve
 git apply ./scripts/enable-android-google-services.patch
-rm -rf fonts/NotoEmoji
-yq -i 'del( .flutter.fonts[] | select(.family == "NotoEmoji") )' pubspec.yaml
+rm -rf fonts/SegoeUIEmoji
+yq -i 'del( .flutter.fonts[] | select(.family == "SegoeUIEmoji") )' pubspec.yaml
 flutter clean
 flutter pub get
 cd ios

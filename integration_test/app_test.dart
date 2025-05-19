@@ -1,15 +1,15 @@
-import 'package:fluffychat/config/setting_keys.dart';
-import 'package:fluffychat/pages/chat/chat_view.dart';
-import 'package:fluffychat/pages/chat_list/chat_list_body.dart';
-import 'package:fluffychat/pages/chat_list/search_title.dart';
-import 'package:fluffychat/pages/invitation_selection/invitation_selection_view.dart';
+import 'package:cloudchat/config/setting_keys.dart';
+import 'package:cloudchat/pages/chat/chat_view.dart';
+import 'package:cloudchat/pages/chat_list/chat_list_body.dart';
+import 'package:cloudchat/pages/chat_list/search_title.dart';
+import 'package:cloudchat/pages/invitation_selection/invitation_selection_view.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:integration_test/integration_test.dart';
 
-import 'package:fluffychat/main.dart' as app;
+import 'package:cloudchat/main.dart' as app;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'extensions/default_flows.dart';
@@ -38,7 +38,7 @@ void main() {
       testWidgets(
         'Start app, login and logout',
         (WidgetTester tester) async {
-          app.main();
+          app.main([]);
           await tester.ensureAppStartedHomescreen();
           await tester.ensureLoggedOut();
         },
@@ -47,7 +47,7 @@ void main() {
       testWidgets(
         'Login again',
         (WidgetTester tester) async {
-          app.main();
+          app.main([]);
           await tester.ensureAppStartedHomescreen();
         },
       );
@@ -55,7 +55,7 @@ void main() {
       testWidgets(
         'Start chat and send message',
         (WidgetTester tester) async {
-          app.main();
+          app.main([]);
           await tester.ensureAppStartedHomescreen();
           await tester.waitFor(find.byType(TextField));
           await tester.enterText(find.byType(TextField), Users.user2.name);
@@ -119,7 +119,7 @@ void main() {
       );
 
       testWidgets('Spaces', (tester) async {
-        app.main();
+        app.main([]);
         await tester.ensureAppStartedHomescreen();
 
         await tester.waitFor(find.byTooltip('Show menu'));

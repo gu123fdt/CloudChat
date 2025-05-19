@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=CloudChat
+GenericName=Matrix Client
+Comment=Chat with your friends
+Exec=cloudchat
+Icon=${SNAP}/meta/gui/cloudchat.png
+Terminal=false
+Type=Application
+Categories=Network;Chat;InstantMessaging;

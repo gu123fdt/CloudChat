@@ -1,4 +1,4 @@
-import 'dart:async';
+/*import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,9 +7,9 @@ import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/pages/chat/events/map_bubble.dart';
-import 'package:fluffychat/widgets/adaptive_dialog_action.dart';
-import 'package:fluffychat/widgets/future_loading_dialog.dart';
+import 'package:cloudchat/pages/chat/events/map_bubble.dart';
+import 'package:cloudchat/widgets/adaptive_dialog_action.dart';
+import 'package:cloudchat/widgets/future_loading_dialog.dart';
 
 class SendLocationDialog extends StatefulWidget {
   final Room room;
@@ -132,3 +132,4 @@ class SendLocationDialogState extends State<SendLocationDialog> {
     );
   }
 }
+*/

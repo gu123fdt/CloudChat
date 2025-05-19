@@ -5,11 +5,11 @@ import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/utils/fluffy_share.dart';
-import 'package:fluffychat/utils/url_launcher.dart';
-import 'package:fluffychat/widgets/avatar.dart';
-import 'package:fluffychat/widgets/future_loading_dialog.dart';
-import 'package:fluffychat/widgets/matrix.dart';
+import 'package:cloudchat/utils/cloud_share.dart';
+import 'package:cloudchat/utils/url_launcher.dart';
+import 'package:cloudchat/widgets/avatar.dart';
+import 'package:cloudchat/widgets/future_loading_dialog.dart';
+import 'package:cloudchat/widgets/matrix.dart';
 
 class PublicRoomBottomSheet extends StatelessWidget {
   final String? roomAlias;
@@ -38,7 +38,7 @@ class PublicRoomBottomSheet extends StatelessWidget {
           return chunk.roomId;
         }
         final roomId = chunk != null && knock
-            ? await client.knockRoom(chunk.roomId, serverName: via)
+            ? await client.knockRoom(chunk.roomId, via: via)
             : await client.joinRoom(
                 roomAlias ?? chunk!.roomId,
                 serverName: via,
@@ -102,7 +102,7 @@ class PublicRoomBottomSheet extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: IconButton(
                 icon: Icon(Icons.adaptive.share_outlined),
-                onPressed: () => FluffyShare.share(
+                onPressed: () => CloudShare.share(
                   'https://matrix.to/#/${roomAlias ?? chunk?.roomId}',
                   context,
                 ),
@@ -141,7 +141,7 @@ class PublicRoomBottomSheet extends StatelessWidget {
                         children: [
                           TextButton.icon(
                             onPressed: roomLink != null
-                                ? () => FluffyShare.share(
+                                ? () => CloudShare.share(
                                       roomLink,
                                       context,
                                       copyOnly: true,

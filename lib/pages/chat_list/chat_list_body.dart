@@ -2,21 +2,23 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:go_router/go_router.dart';
+import 'package:cloudchat/utils/highlights_rooms_and_threads.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/pages/chat_list/chat_list.dart';
-import 'package:fluffychat/pages/chat_list/chat_list_item.dart';
-import 'package:fluffychat/pages/chat_list/dummy_chat_list_item.dart';
-import 'package:fluffychat/pages/chat_list/search_title.dart';
-import 'package:fluffychat/pages/chat_list/space_view.dart';
-import 'package:fluffychat/pages/chat_list/status_msg_list.dart';
-import 'package:fluffychat/pages/user_bottom_sheet/user_bottom_sheet.dart';
-import 'package:fluffychat/utils/adaptive_bottom_sheet.dart';
-import 'package:fluffychat/utils/stream_extension.dart';
-import 'package:fluffychat/widgets/avatar.dart';
-import 'package:fluffychat/widgets/hover_builder.dart';
-import 'package:fluffychat/widgets/public_room_bottom_sheet.dart';
+import 'package:cloudchat/config/app_config.dart';
+import 'package:cloudchat/pages/chat_list/chat_list.dart';
+import 'package:cloudchat/pages/chat_list/chat_list_item.dart';
+import 'package:cloudchat/pages/chat_list/dummy_chat_list_item.dart';
+import 'package:cloudchat/pages/chat_list/search_title.dart';
+import 'package:cloudchat/pages/chat_list/space_view.dart';
+import 'package:cloudchat/pages/chat_list/status_msg_list.dart';
+import 'package:cloudchat/pages/user_bottom_sheet/user_bottom_sheet.dart';
+import 'package:cloudchat/utils/adaptive_bottom_sheet.dart';
+import 'package:cloudchat/utils/stream_extension.dart';
+import 'package:cloudchat/widgets/avatar.dart';
+import 'package:cloudchat/widgets/hover_builder.dart';
+import 'package:cloudchat/widgets/public_room_bottom_sheet.dart';
 import '../../config/themes.dart';
 import '../../widgets/connection_status_header.dart';
 import '../../widgets/matrix.dart';
@@ -55,6 +57,8 @@ class ChatListViewBody extends StatelessWidget {
       }
     }
 
+    final pinned = client.rooms.where((r) => r.isFavourite);
+
     final publicRooms = controller.roomSearchResult?.chunk
         .where((room) => room.roomType != 'm.space')
         .toList();
@@ -83,6 +87,16 @@ class ChatListViewBody extends StatelessWidget {
                 delegate: SliverChildListDelegate(
                   [
                     if (controller.isSearchMode) ...[
+                      ListTile(
+                        leading: const Icon(Icons.search),
+                        title: Text(L10n.of(context).globalSearchMessages),
+                        onTap: () {
+                          context.go(
+                            "/rooms/global_search?search=${controller.searchController.text}",
+                          );
+                          controller.cancelSearch();
+                        },
+                      ),
                       SearchTitle(
                         title: L10n.of(context).publicRooms,
                         icon: const Icon(Icons.explore_outlined),
@@ -98,14 +112,14 @@ class ChatListViewBody extends StatelessWidget {
                         icon: const Icon(Icons.group_outlined),
                       ),
                       AnimatedContainer(
-                        clipBehavior: Clip.hardEdge,
+                        clipBehavior: Clip.antiAliasWithSaveLayer,
                         decoration: const BoxDecoration(),
                         height: userSearchResult == null ||
                                 userSearchResult.results.isEmpty
                             ? 0
                             : 106,
-                        duration: FluffyThemes.animationDuration,
-                        curve: FluffyThemes.animationCurve,
+                        duration: CloudThemes.animationDuration,
+                        curve: CloudThemes.animationCurve,
                         child: userSearchResult == null
                             ? null
                             : ListView.builder(
@@ -139,9 +153,9 @@ class ChatListViewBody extends StatelessWidget {
                     const ConnectionStatusHeader(),
                     AnimatedContainer(
                       height: controller.isTorBrowser ? 64 : 0,
-                      duration: FluffyThemes.animationDuration,
-                      curve: FluffyThemes.animationCurve,
-                      clipBehavior: Clip.hardEdge,
+                      duration: CloudThemes.animationDuration,
+                      curve: CloudThemes.animationCurve,
+                      clipBehavior: Clip.antiAliasWithSaveLayer,
                       decoration: const BoxDecoration(),
                       child: Material(
                         color: theme.colorScheme.surface,
@@ -170,6 +184,7 @@ class ChatListViewBody extends StatelessWidget {
                             else
                               ActiveFilter.allChats,
                             ActiveFilter.groups,
+                            if (pinned.isNotEmpty) ActiveFilter.pinned,
                             ActiveFilter.unread,
                             if (spaceDelegateCandidates.isNotEmpty &&
                                 !controller.widget.displayNavigationRail)
@@ -182,8 +197,8 @@ class ChatListViewBody extends StatelessWidget {
                                   child: HoverBuilder(
                                     builder: (context, hovered) =>
                                         AnimatedScale(
-                                      duration: FluffyThemes.animationDuration,
-                                      curve: FluffyThemes.animationCurve,
+                                      duration: CloudThemes.animationDuration,
+                                      curve: CloudThemes.animationCurve,
                                       scale: hovered ? 1.1 : 1.0,
                                       child: InkWell(
                                         borderRadius: BorderRadius.circular(
@@ -308,6 +323,8 @@ class ChatListViewBody extends StatelessWidget {
                       onLongPress: (context) =>
                           controller.chatContextAction(room, context, space),
                       activeChat: controller.activeChat == room.id,
+                      isMention:
+                          HighlightsRoomsAndThreads().isHighlightRoom(room.id),
                     );
                   },
                 ),
@@ -331,11 +348,11 @@ class PublicRoomsHorizontalList extends StatelessWidget {
   Widget build(BuildContext context) {
     final publicRooms = this.publicRooms;
     return AnimatedContainer(
-      clipBehavior: Clip.hardEdge,
+      clipBehavior: Clip.antiAliasWithSaveLayer,
       decoration: const BoxDecoration(),
       height: publicRooms == null || publicRooms.isEmpty ? 0 : 106,
-      duration: FluffyThemes.animationDuration,
-      curve: FluffyThemes.animationCurve,
+      duration: CloudThemes.animationDuration,
+      curve: CloudThemes.animationCurve,
       child: publicRooms == null
           ? null
           : ListView.builder(

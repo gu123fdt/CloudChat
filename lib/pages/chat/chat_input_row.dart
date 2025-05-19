@@ -4,10 +4,10 @@ import 'package:animations/animations.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/utils/platform_infos.dart';
-import 'package:fluffychat/widgets/avatar.dart';
-import 'package:fluffychat/widgets/matrix.dart';
+import 'package:cloudchat/config/app_config.dart';
+import 'package:cloudchat/utils/platform_infos.dart';
+import 'package:cloudchat/widgets/avatar.dart';
+import 'package:cloudchat/widgets/matrix.dart';
 import '../../config/themes.dart';
 import 'chat.dart';
 import 'input_bar.dart';
@@ -25,6 +25,7 @@ class ChatInputRow extends StatelessWidget {
       return const SizedBox.shrink();
     }
     const height = 48.0;
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.end,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -95,12 +96,12 @@ class ChatInputRow extends StatelessWidget {
           : <Widget>[
               const SizedBox(width: 4),
               AnimatedContainer(
-                duration: FluffyThemes.animationDuration,
-                curve: FluffyThemes.animationCurve,
+                duration: CloudThemes.animationDuration,
+                curve: CloudThemes.animationCurve,
                 height: height,
                 width: controller.sendController.text.isEmpty ? height : 0,
                 alignment: Alignment.center,
-                clipBehavior: Clip.hardEdge,
+                clipBehavior: Clip.antiAliasWithSaveLayer,
                 decoration: const BoxDecoration(),
                 child: PopupMenuButton<String>(
                   icon: const Icon(Icons.add_outlined),
@@ -157,7 +158,7 @@ class ChatInputRow extends StatelessWidget {
                           contentPadding: const EdgeInsets.all(0),
                         ),
                       ),
-                    if (PlatformInfos.isMobile)
+                    /*if (PlatformInfos.isMobile)
                       PopupMenuItem<String>(
                         value: 'location',
                         child: ListTile(
@@ -169,7 +170,7 @@ class ChatInputRow extends StatelessWidget {
                           title: Text(L10n.of(context).shareLocation),
                           contentPadding: const EdgeInsets.all(0),
                         ),
-                      ),
+                      ),*/
                   ],
                 ),
               ),
@@ -203,6 +204,18 @@ class ChatInputRow extends StatelessWidget {
                   onPressed: controller.emojiPickerAction,
                 ),
               ),
+              Container(
+                height: height,
+                width: height,
+                alignment: Alignment.center,
+                child: IconButton(
+                  tooltip: L10n.of(context).openTextEditor,
+                  onPressed: controller.setMDEditor,
+                  icon: const Icon(
+                    Icons.description_outlined,
+                  ),
+                ),
+              ),
               if (Matrix.of(context).isMultiAccount &&
                   Matrix.of(context).hasComplexBundles &&
                   Matrix.of(context).currentBundle!.length > 1)
@@ -215,35 +228,48 @@ class ChatInputRow extends StatelessWidget {
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 0.0),
-                  child: InputBar(
-                    room: controller.room,
-                    minLines: 1,
-                    maxLines: 8,
-                    autofocus: !PlatformInfos.isMobile,
-                    keyboardType: TextInputType.multiline,
-                    textInputAction:
-                        AppConfig.sendOnEnter == true && PlatformInfos.isMobile
-                            ? TextInputAction.send
-                            : null,
-                    onSubmitted: controller.onInputBarSubmitted,
-                    onSubmitImage: controller.sendImageFromClipBoard,
-                    focusNode: controller.inputFocus,
-                    controller: controller.sendController,
-                    decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.only(
-                        left: 6.0,
-                        right: 6.0,
-                        bottom: 6.0,
-                        top: 3.0,
-                      ),
-                      hintText: L10n.of(context).writeAMessage,
-                      hintMaxLines: 1,
-                      border: InputBorder.none,
-                      enabledBorder: InputBorder.none,
-                      filled: false,
-                    ),
-                    onChanged: controller.onInputBarChanged,
-                  ),
+                  child: controller.isMDEditor
+                      ? null
+                      : InputBar(
+                          room: controller.room,
+                          onAddLinkToSelectedText:
+                              controller.addLinkToSelectedText,
+                          onSetBoldToSelectedText:
+                              controller.setSelectedTextBold,
+                          onSetItalicToSelectedText:
+                              controller.setSelectedTextItalic,
+                          onSetStrikeThroughToSelectedText:
+                              controller.setSelectedTextStrikethrough,
+                          minLines: 1,
+                          maxLines: 8,
+                          autofocus: !PlatformInfos.isMobile,
+                          keyboardType: TextInputType.multiline,
+                          textInputAction: AppConfig.sendOnEnter == true &&
+                                  PlatformInfos.isMobile
+                              ? TextInputAction.send
+                              : null,
+                          onSubmitted: controller.onInputBarSubmitted,
+                          onSubmitImage: controller.sendImageFromClipBoard,
+                          onSubmitFiles: controller.sendFilesFromClipBoard,
+                          focusNode: controller.inputFocus,
+                          controller: controller.sendController,
+                          decoration: InputDecoration(
+                            contentPadding: const EdgeInsets.only(
+                              left: 6.0,
+                              right: 6.0,
+                              bottom: 6.0,
+                              top: 3.0,
+                            ),
+                            hintText: L10n.of(context).writeAMessage,
+                            hintMaxLines: 1,
+                            border: InputBorder.none,
+                            enabledBorder: InputBorder.none,
+                            filled: false,
+                          ),
+                          onChanged: controller.onInputBarChanged,
+                          threadRootEventId: controller.thread,
+                          threadLastEventId: controller.threadLastEventId,
+                        ),
                 ),
               ),
               Container(

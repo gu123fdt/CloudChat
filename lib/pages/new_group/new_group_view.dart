@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 
-import 'package:fluffychat/config/themes.dart';
-import 'package:fluffychat/pages/new_group/new_group.dart';
-import 'package:fluffychat/utils/localized_exception_extension.dart';
-import 'package:fluffychat/widgets/avatar.dart';
-import 'package:fluffychat/widgets/layouts/max_width_body.dart';
+import 'package:cloudchat/config/themes.dart';
+import 'package:cloudchat/pages/new_group/new_group.dart';
+import 'package:cloudchat/utils/localized_exception_extension.dart';
+import 'package:cloudchat/widgets/avatar.dart';
+import 'package:cloudchat/widgets/layouts/max_width_body.dart';
 
 class NewGroupView extends StatelessWidget {
   final NewGroupController controller;
@@ -78,7 +78,7 @@ class NewGroupView extends StatelessWidget {
               child: TextField(
                 autofocus: true,
                 controller: controller.nameController,
-                autocorrect: false,
+                autocorrect: true,
                 readOnly: controller.loading,
                 decoration: InputDecoration(
                   prefixIcon: const Icon(Icons.people_outlined),
@@ -101,8 +101,8 @@ class NewGroupView extends StatelessWidget {
               onChanged: controller.loading ? null : controller.setPublicGroup,
             ),
             AnimatedSize(
-              duration: FluffyThemes.animationDuration,
-              curve: FluffyThemes.animationCurve,
+              duration: CloudThemes.animationDuration,
+              curve: CloudThemes.animationCurve,
               child: controller.publicGroup
                   ? SwitchListTile.adaptive(
                       contentPadding:
@@ -117,8 +117,8 @@ class NewGroupView extends StatelessWidget {
                   : const SizedBox.shrink(),
             ),
             AnimatedSize(
-              duration: FluffyThemes.animationDuration,
-              curve: FluffyThemes.animationCurve,
+              duration: CloudThemes.animationDuration,
+              curve: CloudThemes.animationCurve,
               child: controller.createGroupType == CreateGroupType.space
                   ? const SizedBox.shrink()
                   : SwitchListTile.adaptive(
@@ -139,8 +139,8 @@ class NewGroupView extends StatelessWidget {
                     ),
             ),
             AnimatedSize(
-              duration: FluffyThemes.animationDuration,
-              curve: FluffyThemes.animationCurve,
+              duration: CloudThemes.animationDuration,
+              curve: CloudThemes.animationCurve,
               child: controller.createGroupType == CreateGroupType.space
                   ? ListTile(
                       contentPadding:
@@ -158,8 +158,9 @@ class NewGroupView extends StatelessWidget {
               child: SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed:
-                      controller.loading ? null : controller.submitAction,
+                  onPressed: controller.loading || !controller.isButtonActive
+                      ? null
+                      : controller.submitAction,
                   child: controller.loading
                       ? const LinearProgressIndicator()
                       : Text(
@@ -171,8 +172,8 @@ class NewGroupView extends StatelessWidget {
               ),
             ),
             AnimatedSize(
-              duration: FluffyThemes.animationDuration,
-              curve: FluffyThemes.animationCurve,
+              duration: CloudThemes.animationDuration,
+              curve: CloudThemes.animationCurve,
               child: error == null
                   ? const SizedBox.shrink()
                   : ListTile(

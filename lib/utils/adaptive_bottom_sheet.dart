@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/config/themes.dart';
+import 'package:cloudchat/config/app_config.dart';
+import 'package:cloudchat/config/themes.dart';
 
 Future<T?> showAdaptiveBottomSheet<T>({
   required BuildContext context,
@@ -20,9 +20,9 @@ Future<T?> showAdaptiveBottomSheet<T>({
       isScrollControlled: isScrollControlled,
       constraints: BoxConstraints(
         maxHeight: maxHeight,
-        maxWidth: FluffyThemes.columnWidth * 1.25,
+        maxWidth: CloudThemes.columnWidth * 1.25,
       ),
-      clipBehavior: Clip.hardEdge,
+      clipBehavior: Clip.antiAliasWithSaveLayer,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(AppConfig.borderRadius),

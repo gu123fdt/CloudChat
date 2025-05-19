@@ -5,7 +5,7 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
-//import 'package:fluffychat/main.dart';
+//import 'package:cloudchat/main.dart';
 
 import 'package:flutter_test/flutter_test.dart';
 
@@ -13,7 +13,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Test if the app starts', (WidgetTester tester) async {
-    /* await tester.pumpWidget(FluffyChatApp(
+    /* await tester.pumpWidget(CloudChatApp(
       client: await prepareTestClient(),
     ));*/
   });

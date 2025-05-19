@@ -6,14 +6,14 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/config/setting_keys.dart';
-import 'package:fluffychat/config/themes.dart';
-import 'package:fluffychat/pages/chat/events/state_message.dart';
-import 'package:fluffychat/utils/account_config.dart';
-import 'package:fluffychat/widgets/avatar.dart';
-import 'package:fluffychat/widgets/layouts/max_width_body.dart';
-import 'package:fluffychat/widgets/matrix.dart';
-import 'package:fluffychat/widgets/mxc_image.dart';
+import 'package:cloudchat/config/setting_keys.dart';
+import 'package:cloudchat/config/themes.dart';
+import 'package:cloudchat/pages/chat/events/state_message.dart';
+import 'package:cloudchat/utils/account_config.dart';
+import 'package:cloudchat/widgets/avatar.dart';
+import 'package:cloudchat/widgets/layouts/max_width_body.dart';
+import 'package:cloudchat/widgets/matrix.dart';
+import 'package:cloudchat/widgets/mxc_image.dart';
 import '../../config/app_config.dart';
 import '../../widgets/settings_switch_list_tile.dart';
 import 'settings_style.dart';
@@ -161,10 +161,10 @@ class SettingsStyleView extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     AnimatedContainer(
-                      duration: FluffyThemes.animationDuration,
-                      curve: FluffyThemes.animationCurve,
+                      duration: CloudThemes.animationDuration,
+                      curve: CloudThemes.animationCurve,
                       decoration: const BoxDecoration(),
-                      clipBehavior: Clip.hardEdge,
+                      clipBehavior: Clip.antiAliasWithSaveLayer,
                       child: Stack(
                         alignment: Alignment.center,
                         children: [
@@ -181,7 +181,7 @@ class SettingsStyleView extends StatelessWidget {
                                   uri: accountConfig.wallpaperUrl,
                                   fit: BoxFit.cover,
                                   isThumbnail: true,
-                                  width: FluffyThemes.columnWidth * 2,
+                                  width: CloudThemes.columnWidth * 2,
                                   height: 212,
                                 ),
                               ),

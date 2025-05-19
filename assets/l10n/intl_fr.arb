@@ -742,8 +742,8 @@
     "type": "text",
     "placeholders": {}
   },
-  "fluffychat": "FluffyChat",
-  "@fluffychat": {
+  "cloudchat": "CloudChat",
+  "@cloudchat": {
     "type": "text",
     "placeholders": {}
   },
@@ -902,7 +902,7 @@
     "type": "text",
     "placeholders": {}
   },
-  "inviteText": "{username} vous a invité·e sur FluffyChat.\n1. Visiter fluffychat.im et installer l'application\n2. Inscrivez-vous ou connectez-vous\n3. Ouvrez le lien d'invitation :\n{link}",
+  "inviteText": "{username} vous a invité·e sur CloudChat.\n1. Visiter cloudchat.im et installer l'application\n2. Inscrivez-vous ou connectez-vous\n3. Ouvrez le lien d'invitation :\n{link}",
   "@inviteText": {
     "type": "text",
     "placeholders": {
@@ -1054,8 +1054,8 @@
     "type": "text",
     "placeholders": {}
   },
-  "newMessageInFluffyChat": "💬 Nouveau message dans FluffyChat",
-  "@newMessageInFluffyChat": {
+  "newMessageInCloudChat": "💬 Nouveau message dans CloudChat",
+  "@newMessageInCloudChat": {
     "type": "text",
     "placeholders": {}
   },
@@ -1649,7 +1649,7 @@
     "type": "text",
     "placeholders": {}
   },
-  "title": "FluffyChat",
+  "title": "CloudChat",
   "@title": {
     "description": "Title for the application",
     "type": "text",
@@ -2133,7 +2133,7 @@
   "@recoveryKey": {},
   "recoveryKeyLost": "Clé de récupération perdue ?",
   "@recoveryKeyLost": {},
-  "indexedDbErrorLong": "Le stockage des messages n'est malheureusement pas activé par défaut en mode privé.\nVeuillez consulter :\n - about:config\n - Définir dom.indexedDB.privateBrowsing.enabled à « vrai ».\nSinon, il n'est pas possible d'exécuter FluffyChat.",
+  "indexedDbErrorLong": "Le stockage des messages n'est malheureusement pas activé par défaut en mode privé.\nVeuillez consulter :\n - about:config\n - Définir dom.indexedDB.privateBrowsing.enabled à « vrai ».\nSinon, il n'est pas possible d'exécuter CloudChat.",
   "@indexedDbErrorLong": {},
   "saveKeyManuallyDescription": "Enregistrer cette clé manuellement en déclenchant la boîte de dialogue de partage du système ou le presse-papiers.",
   "@saveKeyManuallyDescription": {},
@@ -2194,13 +2194,13 @@
   "@callingPermissions": {},
   "callingAccount": "Compte d'appel",
   "@callingAccount": {},
-  "callingAccountDetails": "Permet à FluffyChat d'utiliser l'application de numérotation native d'Android.",
+  "callingAccountDetails": "Permet à CloudChat d'utiliser l'application de numérotation native d'Android.",
   "@callingAccountDetails": {},
   "appearOnTop": "Apparaître en haut",
   "@appearOnTop": {},
-  "appearOnTopDetails": "Permet à l'application d'apparaître en haut de l'écran (non nécessaire si vous avez déjà configuré Fluffychat comme compte d'appel)",
+  "appearOnTopDetails": "Permet à l'application d'apparaître en haut de l'écran (non nécessaire si vous avez déjà configuré Cloudchat comme compte d'appel)",
   "@appearOnTopDetails": {},
-  "otherCallingPermissions": "Microphone, caméra et autres autorisations de FluffyChat",
+  "otherCallingPermissions": "Microphone, caméra et autres autorisations de CloudChat",
   "@otherCallingPermissions": {},
   "newGroup": "Nouveau groupe",
   "@newGroup": {},

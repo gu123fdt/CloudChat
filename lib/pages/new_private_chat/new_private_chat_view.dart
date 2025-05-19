@@ -5,15 +5,15 @@ import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 
-import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/config/themes.dart';
-import 'package:fluffychat/pages/new_private_chat/new_private_chat.dart';
-import 'package:fluffychat/utils/localized_exception_extension.dart';
-import 'package:fluffychat/utils/platform_infos.dart';
-import 'package:fluffychat/utils/url_launcher.dart';
-import 'package:fluffychat/widgets/avatar.dart';
-import 'package:fluffychat/widgets/layouts/max_width_body.dart';
-import 'package:fluffychat/widgets/matrix.dart';
+import 'package:cloudchat/config/app_config.dart';
+import 'package:cloudchat/config/themes.dart';
+import 'package:cloudchat/pages/new_private_chat/new_private_chat.dart';
+import 'package:cloudchat/utils/localized_exception_extension.dart';
+import 'package:cloudchat/utils/platform_infos.dart';
+import 'package:cloudchat/utils/url_launcher.dart';
+import 'package:cloudchat/widgets/avatar.dart';
+import 'package:cloudchat/widgets/layouts/max_width_body.dart';
+import 'package:cloudchat/widgets/matrix.dart';
 
 class NewPrivateChatView extends StatelessWidget {
   final NewPrivateChatController controller;
@@ -98,7 +98,7 @@ class NewPrivateChatView extends StatelessWidget {
             ),
             Expanded(
               child: AnimatedCrossFade(
-                duration: FluffyThemes.animationDuration,
+                duration: CloudThemes.animationDuration,
                 crossFadeState: searchResponse == null
                     ? CrossFadeState.showFirst
                     : CrossFadeState.showSecond,
@@ -165,7 +165,7 @@ class NewPrivateChatView extends StatelessWidget {
                             elevation: 10,
                             color: Colors.white,
                             shadowColor: theme.appBarTheme.shadowColor,
-                            clipBehavior: Clip.hardEdge,
+                            clipBehavior: Clip.antiAliasWithSaveLayer,
                             child: Padding(
                               padding: const EdgeInsets.all(8),
                               child: PrettyQrView.data(
@@ -217,7 +217,7 @@ class NewPrivateChatView extends StatelessWidget {
                         child: CircularProgressIndicator.adaptive(),
                       );
                     }
-                    if (result.isEmpty) {
+                    if (false) {
                       return Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [

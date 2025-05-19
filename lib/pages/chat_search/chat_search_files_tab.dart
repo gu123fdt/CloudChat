@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:go_router/go_router.dart';
+import 'package:cloudchat/widgets/matrix.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/utils/date_time_extension.dart';
-import 'package:fluffychat/utils/matrix_sdk_extensions/event_extension.dart';
-import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
+import 'package:cloudchat/config/app_config.dart';
+import 'package:cloudchat/utils/date_time_extension.dart';
+import 'package:cloudchat/utils/matrix_sdk_extensions/event_extension.dart';
+import 'package:cloudchat/utils/matrix_sdk_extensions/matrix_locals.dart';
 
 class ChatSearchFilesTab extends StatelessWidget {
   final Room room;
   final Stream<(List<Event>, String?)>? searchStream;
-  final void Function({
-    String? prevBatch,
-    List<Event>? previousSearchResult,
-  }) startSearch;
+  final void Function({String? prevBatch, List<Event>? previousSearchResult})
+  startSearch;
 
   const ChatSearchFilesTab({
     required this.room,
@@ -38,9 +38,7 @@ class ChatSearchFilesTab extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 L10n.of(context).searchIn(
-                  room.getLocalizedDisplayname(
-                    MatrixLocals(L10n.of(context)),
-                  ),
+                  room.getLocalizedDisplayname(MatrixLocals(L10n.of(context))),
                 ),
               ),
             ],
@@ -68,9 +66,7 @@ class ChatSearchFilesTab extends StatelessWidget {
                   return const Padding(
                     padding: EdgeInsets.all(16.0),
                     child: Center(
-                      child: CircularProgressIndicator.adaptive(
-                        strokeWidth: 2,
-                      ),
+                      child: CircularProgressIndicator.adaptive(strokeWidth: 2),
                     ),
                   );
                 }
@@ -86,35 +82,41 @@ class ChatSearchFilesTab extends StatelessWidget {
                         backgroundColor: theme.colorScheme.secondaryContainer,
                         foregroundColor: theme.colorScheme.onSecondaryContainer,
                       ),
-                      onPressed: () => startSearch(
-                        prevBatch: nextBatch,
-                        previousSearchResult: events,
-                      ),
-                      icon: const Icon(
-                        Icons.arrow_downward_outlined,
-                      ),
+                      onPressed:
+                          () => startSearch(
+                            prevBatch: nextBatch,
+                            previousSearchResult: events,
+                          ),
+                      icon: const Icon(Icons.arrow_downward_outlined),
                       label: Text(L10n.of(context).searchMore),
                     ),
                   ),
                 );
               }
               final event = events[i];
-              final filename = event.content.tryGet<String>('filename') ??
+              final filename =
+                  event.content.tryGet<String>('filename') ??
                   event.content.tryGet<String>('body') ??
                   L10n.of(context).unknownEvent('File');
-              final filetype = (filename.contains('.')
-                  ? filename.split('.').last.toUpperCase()
-                  : event.content
-                          .tryGetMap<String, dynamic>('info')
-                          ?.tryGet<String>('mimetype')
-                          ?.toUpperCase() ??
-                      'UNKNOWN');
+              final filetype =
+                  (filename.contains('.')
+                      ? filename.split('.').last.toUpperCase()
+                      : event.content
+                              .tryGetMap<String, dynamic>('info')
+                              ?.tryGet<String>('mimetype')
+                              ?.toUpperCase() ??
+                          'UNKNOWN');
               final sizeString = event.sizeString;
               final prevEvent = i > 0 ? events[i - 1] : null;
-              final sameEnvironment = prevEvent == null
-                  ? false
-                  : prevEvent.originServerTs
-                      .sameEnvironment(event.originServerTs);
+              final sameEnvironment =
+                  prevEvent == null
+                      ? false
+                      : prevEvent.originServerTs.sameEnvironment(
+                        event.originServerTs,
+                      );
+
+              final isDownloaded = Matrix.of(context).store.getString(filename);
+
               return Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
@@ -148,19 +150,44 @@ class ChatSearchFilesTab extends StatelessWidget {
                       const SizedBox(height: 4),
                     ],
                     Material(
-                      borderRadius:
-                          BorderRadius.circular(AppConfig.borderRadius),
+                      borderRadius: BorderRadius.circular(
+                        AppConfig.borderRadius,
+                      ),
                       color: theme.colorScheme.onInverseSurface,
-                      clipBehavior: Clip.hardEdge,
+                      clipBehavior: Clip.antiAliasWithSaveLayer,
                       child: ListTile(
-                        leading: const Icon(Icons.file_present_outlined),
+                        leading: Icon(
+                          isDownloaded != null
+                              ? Icons.folder_open_outlined
+                              : Icons.file_download_outlined,
+                        ),
                         title: Text(
                           filename,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                         subtitle: Text('$sizeString | $filetype'),
-                        onTap: () => event.saveFile(context),
+                        onTap:
+                            () =>
+                                isDownloaded != null
+                                    ? event.openFile(context)
+                                    : event.saveFile(context),
+                        trailing: IconButton(
+                          icon: const Icon(Icons.remove_red_eye),
+                          onPressed: () {
+                            context.go(
+                              '/${Uri(pathSegments: ['rooms', event.roomId!], queryParameters: {'event': event.eventId})}',
+                              extra: {
+                                'from':
+                                    GoRouter.of(context)
+                                        .routeInformationProvider
+                                        .value
+                                        .uri
+                                        .toString(),
+                              },
+                            );
+                          },
+                        ),
                       ),
                     ),
                   ],

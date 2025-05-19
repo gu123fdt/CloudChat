@@ -8,3 +8,4 @@ cd assets/js/ && curl -L $DOWNLOAD_PATH > olm.zip && cd ../../
 cd assets/js/ && unzip olm.zip && cd ../../
 cd assets/js/ && rm olm.zip && cd ../../
 cd assets/js/ && mv javascript package && cd ../../
+read -p "Press any key to exit..."

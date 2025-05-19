@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 
-import 'package:fluffychat/utils/platform_infos.dart';
-import 'package:fluffychat/widgets/mxc_image.dart';
+import 'package:cloudchat/utils/platform_infos.dart';
+import 'package:cloudchat/widgets/mxc_image.dart';
 import 'image_viewer.dart';
 
 class ImageViewerView extends StatelessWidget {
@@ -37,6 +37,14 @@ class ImageViewerView extends StatelessWidget {
             onPressed: controller.forwardAction,
             color: Colors.white,
             tooltip: L10n.of(context).share,
+          ),
+          IconButton(
+            style: IconButton.styleFrom(
+              backgroundColor: Colors.black.withOpacity(0.5),
+            ),
+            icon: const Icon(Icons.remove_red_eye),
+            onPressed: controller.goToMessage,
+            color: Colors.white,
           ),
           const SizedBox(width: 8),
           IconButton(

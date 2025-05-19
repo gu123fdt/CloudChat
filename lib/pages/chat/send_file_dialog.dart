@@ -5,27 +5,33 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:cross_file/cross_file.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:matrix/matrix.dart';
 import 'package:mime/mime.dart';
 
-import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/utils/localized_exception_extension.dart';
-import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_file_extension.dart';
-import 'package:fluffychat/utils/platform_infos.dart';
-import 'package:fluffychat/utils/size_string.dart';
-import 'package:fluffychat/widgets/adaptive_dialog_action.dart';
+import 'package:cloudchat/config/app_config.dart';
+import 'package:cloudchat/utils/localized_exception_extension.dart';
+import 'package:cloudchat/utils/matrix_sdk_extensions/matrix_file_extension.dart';
+import 'package:cloudchat/utils/platform_infos.dart';
+import 'package:cloudchat/utils/size_string.dart';
+import 'package:cloudchat/widgets/adaptive_dialog_action.dart';
+import 'package:path_provider/path_provider.dart';
 import '../../utils/resize_video.dart';
 
 class SendFileDialog extends StatefulWidget {
   final Room room;
   final List<XFile> files;
   final BuildContext outerContext;
+  final String? threadRootEventId;
+  final String? threadLastEventId;
 
   const SendFileDialog({
     required this.room,
     required this.files,
     required this.outerContext,
+    this.threadRootEventId,
+    this.threadLastEventId,
     super.key,
   });
 
@@ -38,6 +44,18 @@ class SendFileDialogState extends State<SendFileDialog> {
 
   /// Images smaller than 20kb don't need compression.
   static const int minSizeToCompress = 20 * 1024;
+  late final FocusNode _focusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
 
   Future<void> _send() async {
     final scaffoldMessenger = ScaffoldMessenger.of(widget.outerContext);
@@ -69,6 +87,7 @@ class SendFileDialogState extends State<SendFileDialog> {
           if (length > maxUploadSize) {
             throw FileTooBigMatrixException(length, maxUploadSize);
           }
+
           // Else we just create a MatrixFile
           file = MatrixFile(
             bytes: await xfile.readAsBytes(),
@@ -97,6 +116,8 @@ class SendFileDialogState extends State<SendFileDialog> {
             file,
             thumbnail: thumbnail,
             shrinkImageMaxDimension: compress ? 1600 : null,
+            threadRootEventId: widget.threadRootEventId,
+            threadLastEventId: widget.threadLastEventId,
           );
         } on MatrixException catch (e) {
           final retryAfterMs = e.retryAfterMs;
@@ -121,7 +142,16 @@ class SendFileDialogState extends State<SendFileDialog> {
             file,
             thumbnail: thumbnail,
             shrinkImageMaxDimension: compress ? null : 1600,
+            threadRootEventId: widget.threadRootEventId,
+            threadLastEventId: widget.threadLastEventId,
           );
+        } finally {
+          final directory = await getApplicationSupportDirectory();
+          final tempDirectoryPath = '${directory.path}\\temp';
+          if (xfile.path.contains(tempDirectoryPath)) {
+            final file = File(xfile.path);
+            await file.delete();
+          }
         }
       }
       scaffoldMessenger.clearSnackBars();
@@ -140,6 +170,17 @@ class SendFileDialogState extends State<SendFileDialog> {
     return;
   }
 
+  void _deleteTempFiles() async {
+    for (final xfile in widget.files) {
+      final directory = await getApplicationSupportDirectory();
+      final tempDirectoryPath = '${directory.path}\\temp';
+      if (xfile.path.contains(tempDirectoryPath)) {
+        final file = File(xfile.path);
+        await file.delete();
+      }
+    }
+  }
+
   Future<String> _calcCombinedFileSize() async {
     final lengths =
         await Future.wait(widget.files.map((file) => file.length()));
@@ -149,7 +190,6 @@ class SendFileDialogState extends State<SendFileDialog> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     var sendStr = L10n.of(context).sendFile;
     final uniqueMimeType = widget.files
         .map((file) => file.mimeType ?? lookupMimeType(file.name))
@@ -187,137 +227,148 @@ class SendFileDialogState extends State<SendFileDialog> {
           title: Text(sendStr),
           content: SizedBox(
             width: 256,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const SizedBox(height: 12),
-                if (uniqueMimeType?.startsWith('image') ?? false)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 16.0),
-                    child: SizedBox(
-                      height: 256,
-                      child: Center(
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: widget.files.length,
-                          scrollDirection: Axis.horizontal,
-                          itemBuilder: (context, i) => Padding(
-                            padding: const EdgeInsets.only(right: 8.0),
-                            child: Material(
-                              borderRadius: BorderRadius.circular(
-                                AppConfig.borderRadius / 2,
+            child: RawKeyboardListener(
+              focusNode: _focusNode,
+              autofocus: true,
+              onKey: (RawKeyEvent event) {
+                if (event.isKeyPressed(LogicalKeyboardKey.enter)) {
+                  _send();
+                }
+              },
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(height: 12),
+                  if (uniqueMimeType?.startsWith('image') ?? false)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 16.0),
+                      child: SizedBox(
+                        height: 256,
+                        child: Center(
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: widget.files.length,
+                            scrollDirection: Axis.horizontal,
+                            itemBuilder: (context, i) => Padding(
+                              padding: const EdgeInsets.only(right: 8.0),
+                              child: Material(
+                                borderRadius: BorderRadius.circular(
+                                  AppConfig.borderRadius / 2,
+                                ),
+                                clipBehavior: Clip.antiAliasWithSaveLayer,
+                                child: kIsWeb
+                                    ? Image.network(
+                                        widget.files[i].path,
+                                        height: 256,
+                                      )
+                                    : Image.file(
+                                        File(widget.files[i].path),
+                                        height: 256,
+                                      ),
                               ),
-                              clipBehavior: Clip.hardEdge,
-                              child: kIsWeb
-                                  ? Image.network(
-                                      widget.files[i].path,
-                                      height: 256,
-                                    )
-                                  : Image.file(
-                                      File(widget.files[i].path),
-                                      height: 256,
-                                    ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                if (uniqueMimeType?.startsWith('image') != true)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 16.0),
-                    child: Row(
+                  if (uniqueMimeType?.startsWith('image') != true)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 16.0),
+                      child: Row(
+                        children: [
+                          Icon(
+                            uniqueMimeType == null
+                                ? Icons.description_outlined
+                                : uniqueMimeType.startsWith('video')
+                                    ? Icons.video_file_outlined
+                                    : uniqueMimeType.startsWith('audio')
+                                        ? Icons.audio_file_outlined
+                                        : Icons.description_outlined,
+                            size: 32,
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  fileName,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                Text(
+                                  '$sizeString - $fileTypes',
+                                  style: theme.textTheme.labelSmall,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  // Workaround for SwitchListTile.adaptive crashes in CupertinoDialog
+                  if (uniqueMimeType != null &&
+                      (uniqueMimeType.startsWith('image') ||
+                          uniqueMimeType.startsWith('video')))
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Icon(
-                          uniqueMimeType == null
-                              ? Icons.description_outlined
-                              : uniqueMimeType.startsWith('video')
-                                  ? Icons.video_file_outlined
-                                  : uniqueMimeType.startsWith('audio')
-                                      ? Icons.audio_file_outlined
-                                      : Icons.description_outlined,
-                          size: 32,
-                        ),
-                        const SizedBox(width: 8),
+                        if ({TargetPlatform.iOS, TargetPlatform.macOS}
+                            .contains(theme.platform))
+                          CupertinoSwitch(
+                            value: compress,
+                            onChanged: uniqueMimeType.startsWith('video') &&
+                                    !PlatformInfos.isMobile
+                                ? null
+                                : (v) => setState(() => compress = v),
+                          )
+                        else
+                          Switch.adaptive(
+                            value: compress,
+                            onChanged: uniqueMimeType.startsWith('video') &&
+                                    !PlatformInfos.isMobile
+                                ? null
+                                : (v) => setState(() => compress = v),
+                          ),
+                        const SizedBox(width: 16),
                         Expanded(
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                fileName,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    L10n.of(context).compress,
+                                    style: theme.textTheme.titleMedium,
+                                    textAlign: TextAlign.left,
+                                  ),
+                                ],
                               ),
-                              Text(
-                                '$sizeString - $fileTypes',
-                                style: theme.textTheme.labelSmall,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
+                              if (!compress)
+                                Text(
+                                  ' ($sizeString)',
+                                  style: theme.textTheme.labelSmall,
+                                ),
                             ],
                           ),
                         ),
                       ],
                     ),
-                  ),
-                // Workaround for SwitchListTile.adaptive crashes in CupertinoDialog
-                if (uniqueMimeType != null &&
-                    (uniqueMimeType.startsWith('image') ||
-                        uniqueMimeType.startsWith('video')))
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      if ({TargetPlatform.iOS, TargetPlatform.macOS}
-                          .contains(theme.platform))
-                        CupertinoSwitch(
-                          value: compress,
-                          onChanged: uniqueMimeType.startsWith('video') &&
-                                  !PlatformInfos.isMobile
-                              ? null
-                              : (v) => setState(() => compress = v),
-                        )
-                      else
-                        Switch.adaptive(
-                          value: compress,
-                          onChanged: uniqueMimeType.startsWith('video') &&
-                                  !PlatformInfos.isMobile
-                              ? null
-                              : (v) => setState(() => compress = v),
-                        ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  L10n.of(context).compress,
-                                  style: theme.textTheme.titleMedium,
-                                  textAlign: TextAlign.left,
-                                ),
-                              ],
-                            ),
-                            if (!compress)
-                              Text(
-                                ' ($sizeString)',
-                                style: theme.textTheme.labelSmall,
-                              ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-              ],
+                ],
+              ),
             ),
           ),
           actions: <Widget>[
             AdaptiveDialogAction(
-              onPressed: () =>
-                  Navigator.of(context, rootNavigator: false).pop(),
+              onPressed: () => {
+                _deleteTempFiles(),
+                Navigator.of(context, rootNavigator: false).pop(),
+              },
               child: Text(L10n.of(context).cancel),
             ),
             AdaptiveDialogAction(

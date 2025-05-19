@@ -5,13 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:cloudchat/widgets/matrix.dart';
 import 'package:matrix/matrix.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:universal_html/html.dart' as html;
 
-import 'package:fluffychat/utils/platform_infos.dart';
-import 'package:fluffychat/utils/size_string.dart';
-import 'package:fluffychat/widgets/future_loading_dialog.dart';
+import 'package:cloudchat/utils/platform_infos.dart';
+import 'package:cloudchat/utils/size_string.dart';
+import 'package:cloudchat/widgets/future_loading_dialog.dart';
 
 extension MatrixFileExtension on MatrixFile {
   void save(BuildContext context) async {
@@ -20,18 +21,25 @@ extension MatrixFileExtension on MatrixFile {
       return;
     }
 
-    final downloadPath = !PlatformInfos.isMobile
-        ? (await getSaveLocation(
-            suggestedName: name,
-            confirmButtonText: L10n.of(context).saveFile,
-          ))
-            ?.path
-        : await FilePicker.platform.saveFile(
-            dialogTitle: L10n.of(context).saveFile,
-            fileName: name,
-            type: filePickerFileType,
-            bytes: bytes,
-          );
+    final downloadPath =
+        !PlatformInfos.isMobile
+            ? (await getSaveLocation(
+              suggestedName: name,
+              confirmButtonText: L10n.of(context).saveFile,
+              acceptedTypeGroups: [
+                XTypeGroup(
+                  label: name.split('.').last,
+                  extensions: [name.split('.').last],
+                ),
+                const XTypeGroup(label: '*.*', extensions: ['*']),
+              ],
+            ))?.path
+            : await FilePicker.platform.saveFile(
+              dialogTitle: L10n.of(context).saveFile,
+              fileName: name,
+              type: filePickerFileType,
+              bytes: bytes,
+            );
     if (downloadPath == null) return;
 
     if (PlatformInfos.isDesktop) {
@@ -44,11 +52,11 @@ extension MatrixFileExtension on MatrixFile {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(
-          L10n.of(context).fileHasBeenSavedAt(downloadPath),
-        ),
+        content: Text(L10n.of(context).fileHasBeenSavedAt(downloadPath)),
       ),
     );
+
+    await Matrix.of(context).store.setString(name, downloadPath);
   }
 
   FileType get filePickerFileType {
@@ -60,13 +68,8 @@ extension MatrixFileExtension on MatrixFile {
 
   void _webDownload() {
     html.AnchorElement(
-      href: html.Url.createObjectUrlFromBlob(
-        html.Blob(
-          [bytes],
-          mimeType,
-        ),
-      ),
-    )
+        href: html.Url.createObjectUrlFromBlob(html.Blob([bytes], mimeType)),
+      )
       ..download = name
       ..click();
   }

@@ -7,16 +7,16 @@ import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart' as sdk;
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/pages/chat_list/chat_list_item.dart';
-import 'package:fluffychat/pages/chat_list/search_title.dart';
-import 'package:fluffychat/utils/adaptive_bottom_sheet.dart';
-import 'package:fluffychat/utils/localized_exception_extension.dart';
-import 'package:fluffychat/utils/stream_extension.dart';
-import 'package:fluffychat/widgets/avatar.dart';
-import 'package:fluffychat/widgets/future_loading_dialog.dart';
-import 'package:fluffychat/widgets/matrix.dart';
-import 'package:fluffychat/widgets/public_room_bottom_sheet.dart';
+import 'package:cloudchat/config/app_config.dart';
+import 'package:cloudchat/pages/chat_list/chat_list_item.dart';
+import 'package:cloudchat/pages/chat_list/search_title.dart';
+import 'package:cloudchat/utils/adaptive_bottom_sheet.dart';
+import 'package:cloudchat/utils/localized_exception_extension.dart';
+import 'package:cloudchat/utils/stream_extension.dart';
+import 'package:cloudchat/widgets/avatar.dart';
+import 'package:cloudchat/widgets/future_loading_dialog.dart';
+import 'package:cloudchat/widgets/matrix.dart';
+import 'package:cloudchat/widgets/public_room_bottom_sheet.dart';
 
 enum AddRoomType { chat, subspace }
 
@@ -407,7 +407,7 @@ class _SpaceViewState extends State<SpaceView> {
                           child: Material(
                             borderRadius:
                                 BorderRadius.circular(AppConfig.borderRadius),
-                            clipBehavior: Clip.hardEdge,
+                            clipBehavior: Clip.antiAliasWithSaveLayer,
                             child: ListTile(
                               minVerticalPadding: 0,
                               leading: Icon(
@@ -448,6 +448,7 @@ class _SpaceViewState extends State<SpaceView> {
                             context,
                           ),
                           activeChat: widget.activeChat == joinedRoom.id,
+                          isMention: false,
                         );
                       },
                     ),
@@ -505,7 +506,7 @@ class _SpaceViewState extends State<SpaceView> {
                           child: Material(
                             borderRadius:
                                 BorderRadius.circular(AppConfig.borderRadius),
-                            clipBehavior: Clip.hardEdge,
+                            clipBehavior: Clip.antiAliasWithSaveLayer,
                             child: ListTile(
                               visualDensity:
                                   const VisualDensity(vertical: -0.5),

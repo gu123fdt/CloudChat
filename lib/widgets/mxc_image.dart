@@ -1,13 +1,15 @@
+import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/config/themes.dart';
-import 'package:fluffychat/utils/client_download_content_extension.dart';
-import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_file_extension.dart';
-import 'package:fluffychat/widgets/matrix.dart';
+import 'package:cloudchat/config/themes.dart';
+import 'package:cloudchat/utils/client_download_content_extension.dart';
+import 'package:cloudchat/utils/matrix_sdk_extensions/matrix_file_extension.dart';
+import 'package:cloudchat/widgets/matrix.dart';
 
 class MxcImage extends StatefulWidget {
   final Uri? uri;
@@ -34,9 +36,9 @@ class MxcImage extends StatefulWidget {
     this.placeholder,
     this.isThumbnail = true,
     this.animated = false,
-    this.animationDuration = FluffyThemes.animationDuration,
+    this.animationDuration = CloudThemes.animationDuration,
     this.retryDuration = const Duration(seconds: 2),
-    this.animationCurve = FluffyThemes.animationCurve,
+    this.animationCurve = CloudThemes.animationCurve,
     this.thumbnailMethod = ThumbnailMethod.scale,
     this.cacheKey,
     this.client,
@@ -110,7 +112,7 @@ class _MxcImageState extends State<MxcImage> {
     }
     try {
       await _load();
-    } catch (_) {
+    } on IOException catch (_) {
       if (!mounted) return;
       await Future.delayed(widget.retryDuration);
       _tryLoad(_);
@@ -150,10 +152,20 @@ class _MxcImageState extends State<MxcImage> {
               fit: widget.fit,
               filterQuality:
                   widget.isThumbnail ? FilterQuality.low : FilterQuality.medium,
-              errorBuilder: (context, __, ___) {
-                _imageData = null;
-                WidgetsBinding.instance.addPostFrameCallback(_tryLoad);
-                return placeholder(context);
+              errorBuilder: (context, e, s) {
+                Logs().d('Unable to render mxc image', e, s);
+                return SizedBox(
+                  width: widget.width,
+                  height: widget.height,
+                  child: Material(
+                    color: Theme.of(context).colorScheme.surfaceContainer,
+                    child: Icon(
+                      Icons.broken_image_outlined,
+                      size: min(widget.height ?? 64, 64),
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                  ),
+                );
               },
             )
           : SizedBox(

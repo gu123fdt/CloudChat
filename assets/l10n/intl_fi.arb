@@ -1,7 +1,7 @@
 {
   "repeatPassword": "Salasana uudelleen",
   "@repeatPassword": {},
-  "about": "Tietoa FluffyChatista",
+  "about": "Tietoa CloudChatista",
   "@about": {
     "type": "text",
     "placeholders": {}
@@ -708,7 +708,7 @@
     "type": "text",
     "placeholders": {}
   },
-  "inviteText": "{username} kutsui sinut FluffyChattiin.\n1. Viereaile sivulla: https://fluffychat.im ja asenna sovellus\n2. Rekisteröidy tai kirjaudu sisään\n3. Avaa kutsulinkki:\n{link}",
+  "inviteText": "{username} kutsui sinut CloudChattiin.\n1. Viereaile sivulla: https://cloudchat.im ja asenna sovellus\n2. Rekisteröidy tai kirjaudu sisään\n3. Avaa kutsulinkki:\n{link}",
   "@inviteText": {
     "type": "text",
     "placeholders": {
@@ -833,8 +833,8 @@
     "type": "text",
     "placeholders": {}
   },
-  "newMessageInFluffyChat": "💬 Uusi viesti FluffyChätissä",
-  "@newMessageInFluffyChat": {
+  "newMessageInCloudChat": "💬 Uusi viesti CloudChätissä",
+  "@newMessageInCloudChat": {
     "type": "text",
     "placeholders": {}
   },
@@ -1115,8 +1115,8 @@
     "type": "text",
     "placeholders": {}
   },
-  "fluffychat": "FluffyChat",
-  "@fluffychat": {
+  "cloudchat": "CloudChat",
+  "@cloudchat": {
     "type": "text",
     "placeholders": {}
   },
@@ -1507,7 +1507,7 @@
     "type": "text",
     "placeholders": {}
   },
-  "title": "FluffyChat",
+  "title": "CloudChat",
   "@title": {
     "description": "Title for the application",
     "type": "text",
@@ -2139,7 +2139,7 @@
   "@pleaseEnterRecoveryKeyDescription": {},
   "unlockOldMessages": "Pura vanhojen viestien salaus",
   "@unlockOldMessages": {},
-  "indexedDbErrorLong": "Viestivarasto ei ole käytössä yksityisselauksessa oletuksena.\nKäythän osoitteessa\n - about:config\n - Aseta dom.indexedDB.privateBrowsing.enabled arvoon true\nMuuten FluffyChatin käyttäminen ei ole mahdollista.",
+  "indexedDbErrorLong": "Viestivarasto ei ole käytössä yksityisselauksessa oletuksena.\nKäythän osoitteessa\n - about:config\n - Aseta dom.indexedDB.privateBrowsing.enabled arvoon true\nMuuten CloudChatin käyttäminen ei ole mahdollista.",
   "@indexedDbErrorLong": {},
   "saveKeyManuallyDescription": "Tallenna tämä avain manuaalisesti käyttäen järjestelmän jakodialogia tai leikepöytää.",
   "@saveKeyManuallyDescription": {},
@@ -2184,11 +2184,11 @@
   "@callingPermissions": {},
   "callingAccount": "Soittamistunnus",
   "@callingAccount": {},
-  "callingAccountDetails": "Sallii FluffyChatin käyttää Androidin omaa Puhelut-sovellusta.",
+  "callingAccountDetails": "Sallii CloudChatin käyttää Androidin omaa Puhelut-sovellusta.",
   "@callingAccountDetails": {},
   "appearOnTop": "Näy päällä",
   "@appearOnTop": {},
-  "appearOnTopDetails": "Sallii sovelluksen näkyä muiden sovellusten päällä (tätä ei tarvita, mikäli olet jo määrittänyt FluffyChatin puhelin-tunnukseksi)",
+  "appearOnTopDetails": "Sallii sovelluksen näkyä muiden sovellusten päällä (tätä ei tarvita, mikäli olet jo määrittänyt CloudChatin puhelin-tunnukseksi)",
   "@appearOnTopDetails": {},
   "newSpace": "Uusi tila",
   "@newSpace": {},
@@ -2200,11 +2200,11 @@
   "@allSpaces": {},
   "screenSharingTitle": "ruudunjako",
   "@screenSharingTitle": {},
-  "otherCallingPermissions": "Mikrofoni, kamera ja muut FluffyChatin oikeudet",
+  "otherCallingPermissions": "Mikrofoni, kamera ja muut CloudChatin oikeudet",
   "@otherCallingPermissions": {},
   "newGroup": "Uusi ryhmä",
   "@newGroup": {},
-  "screenSharingDetail": "Jaat ruutuasi FluffyChatissä",
+  "screenSharingDetail": "Jaat ruutuasi CloudChatissä",
   "@screenSharingDetail": {},
   "hugContent": "{senderName} halaa sinua",
   "@hugContent": {

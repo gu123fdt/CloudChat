@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/utils/string_color.dart';
-import 'package:fluffychat/widgets/mxc_image.dart';
-import 'package:fluffychat/widgets/presence_builder.dart';
+import 'package:cloudchat/utils/string_color.dart';
+import 'package:cloudchat/widgets/mxc_image.dart';
+import 'package:cloudchat/widgets/presence_builder.dart';
 
 class Avatar extends StatelessWidget {
   final Uri? mxContent;
@@ -77,7 +77,7 @@ class Avatar extends StatelessWidget {
               borderRadius: borderRadius,
               side: border ?? BorderSide.none,
             ),
-            clipBehavior: Clip.hardEdge,
+            clipBehavior: Clip.antiAliasWithSaveLayer,
             child: noPic
                 ? textWidget
                 : MxcImage(

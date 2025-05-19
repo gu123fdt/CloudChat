@@ -46,7 +46,9 @@ extension ClientDownloadContentExtension on Client {
     }
     final remoteData = response.bodyBytes;
 
-    await database?.storeFile(cacheKey, remoteData, 0);
+    try {
+      await database?.storeFile(cacheKey, remoteData, 0);
+    } catch (_) {}
 
     return remoteData;
   }

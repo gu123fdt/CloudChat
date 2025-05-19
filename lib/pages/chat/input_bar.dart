@@ -8,10 +8,10 @@ import 'package:matrix/matrix.dart';
 import 'package:pasteboard/pasteboard.dart';
 import 'package:slugify/slugify.dart';
 
-import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/utils/markdown_context_builder.dart';
-import 'package:fluffychat/utils/platform_infos.dart';
-import 'package:fluffychat/widgets/mxc_image.dart';
+import 'package:cloudchat/config/app_config.dart';
+import 'package:cloudchat/utils/markdown_context_builder.dart';
+import 'package:cloudchat/utils/platform_infos.dart';
+import 'package:cloudchat/widgets/mxc_image.dart';
 import '../../widgets/avatar.dart';
 import '../../widgets/matrix.dart';
 import 'command_hints.dart';
@@ -24,20 +24,32 @@ class InputBar extends StatelessWidget {
   final TextInputAction? textInputAction;
   final ValueChanged<String>? onSubmitted;
   final ValueChanged<Uint8List?>? onSubmitImage;
+  final ValueChanged<List<String>>? onSubmitFiles;
   final FocusNode? focusNode;
   final TextEditingController? controller;
   final InputDecoration? decoration;
   final ValueChanged<String>? onChanged;
   final bool? autofocus;
   final bool readOnly;
+  final String? threadRootEventId;
+  final String? threadLastEventId;
+  final Function onAddLinkToSelectedText;
+  final Function onSetBoldToSelectedText;
+  final Function onSetItalicToSelectedText;
+  final Function onSetStrikeThroughToSelectedText;
 
   const InputBar({
     required this.room,
+    required this.onAddLinkToSelectedText,
+    required this.onSetBoldToSelectedText,
+    required this.onSetItalicToSelectedText,
+    required this.onSetStrikeThroughToSelectedText,
     this.minLines,
     this.maxLines,
     this.keyboardType,
     this.onSubmitted,
     this.onSubmitImage,
+    this.onSubmitFiles,
     this.focusNode,
     this.controller,
     this.decoration,
@@ -45,6 +57,8 @@ class InputBar extends StatelessWidget {
     this.autofocus,
     this.textInputAction,
     this.readOnly = false,
+    this.threadRootEventId,
+    this.threadLastEventId,
     super.key,
   });
 
@@ -398,6 +412,7 @@ class InputBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final useShortCuts = (AppConfig.sendOnEnter ?? !PlatformInfos.isMobile);
+
     return Shortcuts(
       shortcuts: !useShortCuts
           ? {}
@@ -407,7 +422,11 @@ class InputBar extends StatelessWidget {
               LogicalKeySet(LogicalKeyboardKey.enter): SubmitLineIntent(),
               LogicalKeySet(
                 LogicalKeyboardKey.controlLeft,
-                LogicalKeyboardKey.keyM,
+                LogicalKeyboardKey.keyV,
+              ): PasteLineIntent(),
+              LogicalKeySet(
+                LogicalKeyboardKey.controlLeft,
+                LogicalKeyboardKey.keyV,
               ): PasteLineIntent(),
             },
       child: Actions(
@@ -437,11 +456,38 @@ class InputBar extends StatelessWidget {
                 ),
                 PasteLineIntent: CallbackAction(
                   onInvoke: (i) async {
+                    final text = await Pasteboard.text;
+                    final files = await Pasteboard.files();
                     final image = await Pasteboard.image;
+
+                    if (text != null) {
+                      final value = controller!.value;
+                      final selectionStart = value.selection.start;
+                      final selectionEnd = value.selection.end;
+
+                      final newText =
+                          '${value.text.substring(0, selectionStart)}$text${value.text.substring(selectionEnd)}';
+
+                      controller!.value = TextEditingValue(
+                        text: newText,
+                        selection: TextSelection.fromPosition(
+                          TextPosition(offset: selectionStart + text.length),
+                        ),
+                      );
+
+                      return null;
+                    }
+
                     if (image != null) {
                       onSubmitImage!(image);
                       return null;
                     }
+
+                    if (files.isNotEmpty) {
+                      onSubmitFiles!(files);
+                      return null;
+                    }
+
                     return null;
                   },
                 ),
@@ -458,8 +504,15 @@ class InputBar extends StatelessWidget {
           builder: (context, controller, focusNode) => TextField(
             controller: controller,
             focusNode: focusNode,
-            contextMenuBuilder: (c, e) =>
-                markdownContextBuilder(c, e, controller),
+            contextMenuBuilder: (c, e) => markdownContextBuilder(
+              c,
+              e,
+              controller,
+              onAddLinkToSelectedText,
+              onSetBoldToSelectedText,
+              onSetItalicToSelectedText,
+              onSetStrikeThroughToSelectedText,
+            ),
             contentInsertionConfiguration: ContentInsertionConfiguration(
               onContentInserted: (KeyboardInsertedContent content) {
                 final data = content.data;
@@ -473,6 +526,8 @@ class InputBar extends StatelessWidget {
                 room.sendFileEvent(
                   file,
                   shrinkImageMaxDimension: 1600,
+                  threadRootEventId: threadRootEventId,
+                  threadLastEventId: threadLastEventId,
                 );
               },
             ),

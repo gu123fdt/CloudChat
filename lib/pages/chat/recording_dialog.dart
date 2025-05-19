@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloudchat/widgets/matrix.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -10,9 +11,10 @@ import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
-import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/utils/platform_infos.dart';
+import 'package:cloudchat/config/app_config.dart';
+import 'package:cloudchat/utils/platform_infos.dart';
 import 'events/audio_player.dart';
+import 'package:matrix/matrix.dart';
 
 class RecordingDialog extends StatefulWidget {
   const RecordingDialog({
@@ -39,16 +41,8 @@ class RecordingDialogState extends State<RecordingDialog> {
 
   Future<void> startRecording() async {
     try {
-      final codec = kIsWeb
-          // Web seems to create webm instead of ogg when using opus encoder
-          // which does not play on iOS right now. So we use wav for now:
-          ? AudioEncoder.wav
-          // Everywhere else we use opus if supported by the platform:
-          : await _audioRecorder.isEncoderSupported(AudioEncoder.opus)
-              ? AudioEncoder.opus
-              : AudioEncoder.aacLc;
       fileName =
-          'recording${DateTime.now().microsecondsSinceEpoch}.${codec.fileExtension}';
+          'recording${DateTime.now().microsecondsSinceEpoch}.${AudioEncoder.wav.fileExtension}';
       String? path;
       if (!kIsWeb) {
         final tempDir = await getTemporaryDirectory();
@@ -62,6 +56,14 @@ class RecordingDialogState extends State<RecordingDialog> {
       }
       await WakelockPlus.enable();
 
+      final devices = await _audioRecorder.listInputDevices();
+      InputDevice? device;
+
+      final recordDeviceId = Matrix.of(context).store.getString("inputDevice");
+      if (devices.any((d) => d.id == recordDeviceId)) {
+        device = devices.firstWhere((device) => device.id == recordDeviceId);
+      }
+
       await _audioRecorder.start(
         RecordConfig(
           bitRate: bitRate,
@@ -70,7 +72,8 @@ class RecordingDialogState extends State<RecordingDialog> {
           autoGain: true,
           echoCancel: true,
           noiseSuppress: true,
-          encoder: codec,
+          encoder: AudioEncoder.wav,
+          device: device,
         ),
         path: path ?? '',
       );
@@ -86,7 +89,9 @@ class RecordingDialogState extends State<RecordingDialog> {
           _duration += const Duration(milliseconds: 100);
         });
       });
-    } catch (_) {
+    } catch (e) {
+      Logs().i("[startRecording] Ex: $e");
+
       setState(() => error = true);
       rethrow;
     }

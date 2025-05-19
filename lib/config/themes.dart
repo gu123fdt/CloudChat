@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:fluffychat/utils/platform_infos.dart';
+import 'package:cloudchat/utils/platform_infos.dart';
 import 'app_config.dart';
 
-abstract class FluffyThemes {
+abstract class CloudThemes {
   static const double columnWidth = 360.0;
 
   static const double navRailWidth = 64.0;
@@ -16,11 +16,11 @@ abstract class FluffyThemes {
       isColumnModeByWidth(MediaQuery.of(context).size.width);
 
   static bool isThreeColumnMode(BuildContext context) =>
-      MediaQuery.of(context).size.width > FluffyThemes.columnWidth * 3.5;
+      MediaQuery.of(context).size.width > CloudThemes.columnWidth * 3.5;
 
   static const fallbackTextStyle = TextStyle(
     fontFamily: 'Roboto',
-    fontFamilyFallback: ['NotoEmoji'],
+    fontFamilyFallback: ['SegoeUIEmoji'],
   );
 
   static var fallbackTextTheme = const TextTheme(
@@ -95,14 +95,14 @@ abstract class FluffyThemes {
         filled: false,
       ),
       appBarTheme: AppBarTheme(
-        toolbarHeight: FluffyThemes.isColumnMode(context) ? 72 : 56,
-        shadowColor: FluffyThemes.isColumnMode(context)
+        toolbarHeight: CloudThemes.isColumnMode(context) ? 72 : 56,
+        shadowColor: CloudThemes.isColumnMode(context)
             ? colorScheme.surfaceContainer.withAlpha(128)
             : null,
         surfaceTintColor:
-            FluffyThemes.isColumnMode(context) ? colorScheme.surface : null,
+            CloudThemes.isColumnMode(context) ? colorScheme.surface : null,
         backgroundColor:
-            FluffyThemes.isColumnMode(context) ? colorScheme.surface : null,
+            CloudThemes.isColumnMode(context) ? colorScheme.surface : null,
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: Colors.transparent,
           statusBarIconBrightness: brightness.reversed,
@@ -128,9 +128,12 @@ abstract class FluffyThemes {
           borderRadius: BorderRadius.circular(AppConfig.borderRadius),
         ),
       ),
-      snackBarTheme: const SnackBarThemeData(
-        behavior: SnackBarBehavior.floating,
-      ),
+      snackBarTheme: CloudThemes.isColumnMode(context)
+          ? const SnackBarThemeData(
+              behavior: SnackBarBehavior.floating,
+              width: CloudThemes.columnWidth * 1.5,
+            )
+          : const SnackBarThemeData(behavior: SnackBarBehavior.floating),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: colorScheme.secondaryContainer,

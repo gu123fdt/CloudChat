@@ -24,6 +24,7 @@ class BlurHash extends StatefulWidget {
 
 class _BlurHashState extends State<BlurHash> {
   Uint8List? _data;
+  late final Future<Uint8List?> _blurhashFuture;
 
   static Future<Uint8List> getBlurhashData(
     BlurhashData blurhashData,
@@ -34,7 +35,9 @@ class _BlurHashState extends State<BlurHash> {
   }
 
   Future<Uint8List?> _computeBlurhashData() async {
-    if (_data != null) return _data!;
+    return null;
+  
+    /*if (_data != null) return _data!;
     final ratio = widget.width / widget.height;
     var width = 32;
     var height = 32;
@@ -51,14 +54,19 @@ class _BlurHashState extends State<BlurHash> {
         w: width,
         h: height,
       ),
-    );
+    );*/
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _blurhashFuture = _computeBlurhashData();
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<Uint8List?>(
-      future: _computeBlurhashData(),
-      initialData: _data,
+      future: _blurhashFuture,
       builder: (context, snapshot) {
         final data = snapshot.data;
         if (data == null) {

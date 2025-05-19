@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:cloudchat/utils/app_locker/app_locker.dart';
 import 'package:matrix/matrix.dart';
 import 'package:provider/provider.dart';
+import 'package:cloudchat/widgets/lock_screen.dart';
+import 'package:idle_detector_wrapper/idle_detector_wrapper.dart';
+import 'package:cloudchat/widgets/lock_screen.dart';
 
-import 'package:fluffychat/config/setting_keys.dart';
-import 'package:fluffychat/widgets/lock_screen.dart';
+import 'inactivity_detector.dart';
 
 class AppLockWidget extends StatefulWidget {
   const AppLockWidget({
     required this.child,
-    required this.pincode,
     required this.clients,
     super.key,
   });
 
   final List<Client> clients;
-  final String? pincode;
   final Widget child;
 
   @override
@@ -24,20 +24,33 @@ class AppLockWidget extends StatefulWidget {
 }
 
 class AppLock extends State<AppLockWidget> with WidgetsBindingObserver {
-  String? _pincode;
   bool _isLocked = false;
   bool _paused = false;
-  bool get isActive =>
-      _pincode != null &&
-      int.tryParse(_pincode!) != null &&
-      _pincode!.length == 4 &&
-      !_paused;
+  bool get isActive => AppLocker.getLockApp() == true && !_paused;
+
+  Duration? _lockTimeout;
 
   @override
   void initState() {
-    _pincode = widget.pincode;
-    _isLocked = isActive;
     super.initState();
+    _isLocked = isActive;
+    AppLocker.init(
+      () {
+        setState(() {
+          _isLocked = false;
+        });
+      },
+      () {
+        setState(() {
+          _isLocked = true;
+        });
+      },
+      () {
+        setState(() {
+          _lockTimeout = Duration(minutes: AppLocker.getLockTimeout() ?? 0);
+        });
+      },
+    );
     WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback(_checkLoggedIn);
   }
@@ -45,7 +58,7 @@ class AppLock extends State<AppLockWidget> with WidgetsBindingObserver {
   void _checkLoggedIn(_) async {
     if (widget.clients.any((client) => client.isLogged())) return;
 
-    await changePincode(null);
+    await AppLocker.setLockMethod(null, null);
     setState(() {
       _isLocked = false;
     });
@@ -62,25 +75,6 @@ class AppLock extends State<AppLockWidget> with WidgetsBindingObserver {
   }
 
   bool get isLocked => _isLocked;
-
-  Future<void> changePincode(String? pincode) async {
-    await const FlutterSecureStorage().write(
-      key: SettingKeys.appLockKey,
-      value: pincode,
-    );
-    _pincode = pincode;
-    return;
-  }
-
-  bool unlock(String pincode) {
-    final isCorrect = pincode == _pincode;
-    if (isCorrect) {
-      setState(() {
-        _isLocked = false;
-      });
-    }
-    return isCorrect;
-  }
 
   void showLockScreen() => setState(() {
         _isLocked = true;
@@ -103,12 +97,22 @@ class AppLock extends State<AppLockWidget> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) => Provider<AppLock>(
         create: (_) => this,
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            widget.child,
-            if (isLocked) const LockScreen(),
-          ],
+        child: InactivityDetector(
+          timeout: _lockTimeout ?? Duration.zero,
+          onInactivity: () {
+            if (AppLocker.getLockApp() &&
+                AppLocker.getLockTimeout() != 0 &&
+                _lockTimeout != null) {
+              AppLocker.lockApp();
+            }
+          },
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              widget.child,
+              if (isLocked) const LockScreen(),
+            ],
+          ),
         ),
       );
 }

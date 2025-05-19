@@ -5,10 +5,10 @@ import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
-import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/widgets/adaptive_dialog_action.dart';
-import 'package:fluffychat/widgets/layouts/login_scaffold.dart';
-import 'package:fluffychat/widgets/matrix.dart';
+import 'package:cloudchat/config/app_config.dart';
+import 'package:cloudchat/widgets/adaptive_dialog_action.dart';
+import 'package:cloudchat/widgets/layouts/login_scaffold.dart';
+import 'package:cloudchat/widgets/matrix.dart';
 import '../../config/themes.dart';
 import 'homeserver_picker.dart';
 
@@ -87,12 +87,12 @@ class HomeserverPickerView extends StatelessWidget {
                     // usually forced to logout as TOR browser is non-persistent
                     AnimatedContainer(
                       height: controller.isTorBrowser ? 64 : 0,
-                      duration: FluffyThemes.animationDuration,
-                      curve: FluffyThemes.animationCurve,
-                      clipBehavior: Clip.hardEdge,
+                      duration: CloudThemes.animationDuration,
+                      curve: CloudThemes.animationCurve,
+                      clipBehavior: Clip.antiAliasWithSaveLayer,
                       decoration: const BoxDecoration(),
                       child: Material(
-                        clipBehavior: Clip.hardEdge,
+                        clipBehavior: Clip.antiAliasWithSaveLayer,
                         borderRadius: const BorderRadius.vertical(
                           bottom: Radius.circular(8),
                         ),
@@ -108,11 +108,11 @@ class HomeserverPickerView extends StatelessWidget {
                     ),
                     Container(
                       alignment: Alignment.center,
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       child: Hero(
                         tag: 'info-logo',
                         child: Image.asset(
-                          './assets/banner_transparent.png',
+                          './assets/banner.png',
                           fit: BoxFit.fitWidth,
                         ),
                       ),

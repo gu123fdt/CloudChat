@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/pages/image_viewer/image_viewer.dart';
-import 'package:fluffychat/widgets/mxc_image.dart';
+import 'package:cloudchat/config/app_config.dart';
+import 'package:cloudchat/pages/image_viewer/image_viewer.dart';
+import 'package:cloudchat/widgets/mxc_image.dart';
 import '../../../widgets/blur_hash.dart';
 
 class ImageBubble extends StatelessWidget {
@@ -75,7 +75,7 @@ class ImageBubble extends StatelessWidget {
         this.borderRadius ?? BorderRadius.circular(AppConfig.borderRadius);
     return Material(
       color: Colors.transparent,
-      clipBehavior: Clip.hardEdge,
+      clipBehavior: Clip.antiAliasWithSaveLayer,
       shape: RoundedRectangleBorder(
         borderRadius: borderRadius,
         side: BorderSide(

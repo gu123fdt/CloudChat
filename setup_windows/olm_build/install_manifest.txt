@@ -1,0 +1,12 @@
+C:/Program Files (x86)/olm/lib/libolm.dll.a
+C:/Program Files (x86)/olm/include/olm/olm.h
+C:/Program Files (x86)/olm/include/olm/olm_export.h
+C:/Program Files (x86)/olm/include/olm/outbound_group_session.h
+C:/Program Files (x86)/olm/include/olm/inbound_group_session.h
+C:/Program Files (x86)/olm/include/olm/pk.h
+C:/Program Files (x86)/olm/include/olm/sas.h
+C:/Program Files (x86)/olm/include/olm/error.h
+C:/Program Files (x86)/olm/lib/cmake/Olm/OlmTargets.cmake
+C:/Program Files (x86)/olm/lib/cmake/Olm/OlmTargets-release.cmake
+C:/Program Files (x86)/olm/lib/cmake/Olm/OlmConfig.cmake
+C:/Program Files (x86)/olm/lib/cmake/Olm/OlmConfigVersion.cmake

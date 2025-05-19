@@ -5,111 +5,88 @@ import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/utils/date_time_extension.dart';
-import 'package:fluffychat/utils/matrix_sdk_extensions/matrix_locals.dart';
-import 'package:fluffychat/utils/url_launcher.dart';
-import 'package:fluffychat/widgets/avatar.dart';
+import 'package:cloudchat/utils/date_time_extension.dart';
+import 'package:cloudchat/utils/matrix_sdk_extensions/matrix_locals.dart';
+import 'package:cloudchat/utils/url_launcher.dart';
+import 'package:cloudchat/widgets/avatar.dart';
+
+import '../../widgets/matrix.dart';
 
 class ChatSearchMessageTab extends StatelessWidget {
   final String searchQuery;
-  final Room room;
-  final Stream<(List<Event>, String?)>? searchStream;
   final void Function({
     String? prevBatch,
     List<Event>? previousSearchResult,
   }) startSearch;
+  final List<Event> events;
+  final Room? room;
+  final bool isLoading;
 
   const ChatSearchMessageTab({
     required this.searchQuery,
-    required this.room,
-    required this.searchStream,
+    required this.events,
     required this.startSearch,
+    required this.isLoading,
+    this.room,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-      key: ValueKey(searchQuery),
-      stream: searchStream,
-      builder: (context, snapshot) {
-        final theme = Theme.of(context);
-        if (searchStream == null) {
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.search_outlined, size: 64),
-              const SizedBox(height: 8),
-              Text(
-                L10n.of(context).searchIn(
-                  room.getLocalizedDisplayname(
+    final theme = Theme.of(context);
+
+    if (events.isEmpty) {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.search_outlined, size: 64),
+          const SizedBox(height: 8),
+          Text(
+            room != null
+                ? L10n.of(context).searchIn(room!.getLocalizedDisplayname(
                     MatrixLocals(L10n.of(context)),
+                  ),)
+                : L10n.of(context).searchInGlobal,
+          ),
+        ],
+      );
+    }
+
+    return SelectionArea(
+      child: ListView.separated(
+        itemCount: isLoading ? events.length + 1 : events.length,
+        separatorBuilder: (context, _) => Divider(
+          color: theme.dividerColor,
+          height: 1,
+        ),
+        itemBuilder: (context, i) {
+          if (i == events.length) {
+            if (isLoading) {
+              return const Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Center(
+                  child: CircularProgressIndicator.adaptive(
+                    strokeWidth: 2,
                   ),
                 ),
-              ),
-            ],
-          );
-        }
-        final events = snapshot.data?.$1 ?? [];
+              );
+            }
+          }
 
-        return SelectionArea(
-          child: ListView.separated(
-            itemCount: events.length + 1,
-            separatorBuilder: (context, _) => Divider(
-              color: theme.dividerColor,
-              height: 1,
-            ),
-            itemBuilder: (context, i) {
-              if (i == events.length) {
-                if (snapshot.connectionState != ConnectionState.done) {
-                  return const Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Center(
-                      child: CircularProgressIndicator.adaptive(
-                        strokeWidth: 2,
-                      ),
-                    ),
-                  );
-                }
-                final nextBatch = snapshot.data?.$2;
-                if (nextBatch == null) {
-                  return const SizedBox.shrink();
-                }
-                return Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: TextButton.icon(
-                      style: TextButton.styleFrom(
-                        backgroundColor: theme.colorScheme.secondaryContainer,
-                        foregroundColor: theme.colorScheme.onSecondaryContainer,
-                      ),
-                      onPressed: () => startSearch(
-                        prevBatch: nextBatch,
-                        previousSearchResult: events,
-                      ),
-                      icon: const Icon(
-                        Icons.arrow_downward_outlined,
-                      ),
-                      label: Text(L10n.of(context).searchMore),
-                    ),
-                  ),
-                );
-              }
-              final event = events[i];
-              final sender = event.senderFromMemoryOrFallback;
-              final displayname = sender.calcDisplayname(
-                i18n: MatrixLocals(L10n.of(context)),
-              );
-              return _MessageSearchResultListTile(
-                sender: sender,
-                displayname: displayname,
-                event: event,
-                room: room,
-              );
-            },
-          ),
-        );
-      },
+          final event = events[i];
+          final sender = event.senderFromMemoryOrFallback;
+          final displayname = sender.calcDisplayname(
+            i18n: MatrixLocals(L10n.of(context)),
+          );
+
+          return _MessageSearchResultListTile(
+            sender: sender,
+            displayname: displayname,
+            event: event,
+            room: Matrix.of(context).client.getRoomById(event.roomId!)!,
+          );
+        },
+      ),
     );
   }
 }
@@ -143,6 +120,11 @@ class _MessageSearchResultListTile extends StatelessWidget {
           Text(
             displayname,
           ),
+          if (room.name != "")
+            Text(
+              ' | ${room.name}',
+              style: const TextStyle(fontSize: 12),
+            ),
           Expanded(
             child: Text(
               ' | ${event.originServerTs.localizedTimeShort(context)}',
@@ -175,12 +157,27 @@ class _MessageSearchResultListTile extends StatelessWidget {
         icon: const Icon(
           Icons.chevron_right_outlined,
         ),
-        onPressed: () => context.go(
-          '/${Uri(
-            pathSegments: ['rooms', room.id],
-            queryParameters: {'event': event.eventId},
-          )}',
-        ),
+        onPressed: () {
+          if (event.relationshipType == RelationshipTypes.thread) {
+            context.go(
+              '/${Uri(
+                pathSegments: ['rooms', room.id],
+                queryParameters: {
+                  'threadEvent': event.eventId,
+                  'event': event.relationshipEventId,
+                  'thread': event.relationshipEventId,
+                },
+              )}',
+            );
+          } else {
+            context.go(
+              '/${Uri(
+                pathSegments: ['rooms', room.id],
+                queryParameters: {'event': event.eventId},
+              )}',
+            );
+          }
+        },
       ),
     );
   }

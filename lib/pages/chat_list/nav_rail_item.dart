@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:fluffychat/config/app_config.dart';
+import 'package:cloudchat/config/app_config.dart';
 import '../../config/themes.dart';
 
 class NaviRailItem extends StatefulWidget {
@@ -49,8 +49,8 @@ class _NaviRailItemState extends State<NaviRailItem> {
             left: 0,
             child: AnimatedContainer(
               width: widget.isSelected ? 4 : 0,
-              duration: FluffyThemes.animationDuration,
-              curve: FluffyThemes.animationCurve,
+              duration: CloudThemes.animationDuration,
+              curve: CloudThemes.animationCurve,
               decoration: BoxDecoration(
                 color: theme.colorScheme.primary,
                 borderRadius: const BorderRadius.only(
@@ -63,8 +63,8 @@ class _NaviRailItemState extends State<NaviRailItem> {
           Center(
             child: AnimatedScale(
               scale: _hovered ? 1.2 : 1.0,
-              duration: FluffyThemes.animationDuration,
-              curve: FluffyThemes.animationCurve,
+              duration: CloudThemes.animationDuration,
+              curve: CloudThemes.animationCurve,
               child: Material(
                 borderRadius: borderRadius,
                 color: widget.isSelected

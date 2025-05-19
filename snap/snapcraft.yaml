@@ -1,11 +1,11 @@
-name: fluffychat
-title: FluffyChat
+name: cloudchat
+title: CloudChat
 base: core24
 version: git
 license: AGPL-3.0
 summary: The cutest messenger in the Matrix network
 description: |
-  FluffyChat is an open source, nonprofit and cute matrix messenger app. The app is easy to use but secure and decentralized.
+  CloudChat is an open source, nonprofit and cute matrix messenger app. The app is easy to use but secure and decentralized.
 
 
   ## Features
@@ -29,17 +29,16 @@ description: |
   - And much more...
 
 
-  ## FluffyChat comes with a dream
+  ## CloudChat comes with a dream
 
   Imagine a world where everyone can choose the messenger they like and is still able to chat with all of their friends.
 
   A world where there are no companies spying on you when you send selfies to friends and lovers.
 
-  And a world where apps are made for fluffyness and not for profit. ♥
+  And a world where apps are made for cloudness and not for profit. ♥
 
-  Join the community: https://matrix.to/#/#fluffychat:matrix.org
-  Website: http://fluffychat.im
-  Microblog: https://mastodon.art/@krille
+  Join the community: https://matrix.to/#/#cloudchat:matrix.org
+  Website: http://cloudchat.im
 
 grade: stable
 confinement: strict
@@ -61,7 +60,7 @@ parts:
     build-packages:
       - g++
 
-  fluffychat:
+  cloudchat:
     plugin: flutter
     source: .
     override-build: |
@@ -81,11 +80,11 @@ slots:
   dbus-svc:
     interface: dbus
     bus: session
-    name: chat.fluffy.fluffychat
+    name: chat.cloud.cloudchat
 
 apps:
-  fluffychat:
-    command: fluffychat
+  cloudchat:
+    command: cloudchat
     extensions: [ gnome ]
     plugs:
       - audio-playback

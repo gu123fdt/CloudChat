@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import 'package:fluffychat/config/app_config.dart';
-import 'package:fluffychat/config/themes.dart';
-import 'package:fluffychat/pages/chat/chat.dart';
-import 'package:fluffychat/widgets/avatar.dart';
-import 'package:fluffychat/widgets/matrix.dart';
+import 'package:cloudchat/config/app_config.dart';
+import 'package:cloudchat/config/themes.dart';
+import 'package:cloudchat/pages/chat/chat.dart';
+import 'package:cloudchat/widgets/avatar.dart';
+import 'package:cloudchat/widgets/matrix.dart';
 
 class TypingIndicators extends StatelessWidget {
   final ChatController controller;
@@ -34,16 +34,16 @@ class TypingIndicators extends StatelessWidget {
           alignment: Alignment.center,
           child: AnimatedContainer(
             constraints:
-                const BoxConstraints(maxWidth: FluffyThemes.columnWidth * 2.5),
+                const BoxConstraints(maxWidth: CloudThemes.columnWidth * 2.5),
             height: typingUsers.isEmpty ? 0 : avatarSize + 8,
-            duration: FluffyThemes.animationDuration,
-            curve: FluffyThemes.animationCurve,
-            alignment: controller.timeline!.events.isNotEmpty &&
-                    controller.timeline!.events.first.senderId ==
+            duration: CloudThemes.animationDuration,
+            curve: CloudThemes.animationCurve,
+            alignment: controller.getFilteredEvents().isNotEmpty &&
+                    controller.getFilteredEvents().first.senderId ==
                         Matrix.of(context).client.userID
                 ? Alignment.topRight
                 : Alignment.topLeft,
-            clipBehavior: Clip.hardEdge,
+            clipBehavior: Clip.antiAliasWithSaveLayer,
             decoration: const BoxDecoration(),
             padding: const EdgeInsets.symmetric(
               horizontal: 8.0,
@@ -146,7 +146,7 @@ class __TypingDotsState extends State<_TypingDots> {
         for (var i = 1; i <= 3; i++)
           AnimatedContainer(
             duration: animationDuration * 1.5,
-            curve: FluffyThemes.animationCurve,
+            curve: CloudThemes.animationCurve,
             width: size,
             height: _tick == i ? size * 2 : size,
             margin: EdgeInsets.symmetric(

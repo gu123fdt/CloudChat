@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:cloudchat/widgets/matrix.dart';
 
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/utils/matrix_sdk_extensions/event_extension.dart';
+import 'package:cloudchat/utils/matrix_sdk_extensions/event_extension.dart';
 
 class MessageDownloadContent extends StatelessWidget {
   final Event event;
@@ -13,16 +14,23 @@ class MessageDownloadContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final filename = event.content.tryGet<String>('filename') ?? event.body;
-    final filetype = (filename.contains('.')
-        ? filename.split('.').last.toUpperCase()
-        : event.content
-                .tryGetMap<String, dynamic>('info')
-                ?.tryGet<String>('mimetype')
-                ?.toUpperCase() ??
-            'UNKNOWN');
+    final filetype =
+        (filename.contains('.')
+            ? filename.split('.').last.toUpperCase()
+            : event.content
+                    .tryGetMap<String, dynamic>('info')
+                    ?.tryGet<String>('mimetype')
+                    ?.toUpperCase() ??
+                'UNKNOWN');
     final sizeString = event.sizeString;
+    final isDownloaded = Matrix.of(context).store.getString(filename);
+
     return InkWell(
-      onTap: () => event.saveFile(context),
+      onTap:
+          () =>
+              isDownloaded != null
+                  ? event.openFile(context)
+                  : event.saveFile(context),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
@@ -32,7 +40,9 @@ class MessageDownloadContent extends StatelessWidget {
             child: Row(
               children: [
                 Icon(
-                  Icons.file_download_outlined,
+                  isDownloaded != null
+                      ? Icons.folder_open_outlined
+                      : Icons.file_download_outlined,
                   color: textColor,
                 ),
                 const SizedBox(width: 16),
@@ -57,17 +67,13 @@ class MessageDownloadContent extends StatelessWidget {
               children: [
                 Text(
                   filetype,
-                  style: TextStyle(
-                    color: textColor.withAlpha(150),
-                  ),
+                  style: TextStyle(color: textColor.withAlpha(150)),
                 ),
                 const Spacer(),
                 if (sizeString != null)
                   Text(
                     sizeString,
-                    style: TextStyle(
-                      color: textColor.withAlpha(150),
-                    ),
+                    style: TextStyle(color: textColor.withAlpha(150)),
                   ),
               ],
             ),

@@ -1,7 +1,7 @@
 /*
  *   Famedly
  *   Copyright (C) 2020, 2021 Famedly GmbH
- *   Copyright (C) 2021 Fluffychat
+ *   Copyright (C) 2021 Cloudchat
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU Affero General Public License as
@@ -24,22 +24,27 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import 'package:flutter_app_badger/flutter_app_badger.dart';
+import 'package:flutter_new_badger/flutter_new_badger.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
+import 'package:cloudchat/utils/voip/call_manager.dart';
+import 'package:cloudchat/utils/voip/sound_service.dart';
+import 'package:cloudchat/utils/voip/voip_service.dart';
+import 'package:cloudchat/utils/voip/voip_sturtup.dart';
 import 'package:matrix/matrix.dart';
 import 'package:unifiedpush/unifiedpush.dart';
 import 'package:unifiedpush_ui/unifiedpush_ui.dart';
 
-import 'package:fluffychat/utils/push_helper.dart';
-import 'package:fluffychat/widgets/fluffy_chat_app.dart';
+import 'package:cloudchat/utils/push_helper.dart';
+import 'package:cloudchat/widgets/cloud_chat_app.dart';
 import '../config/app_config.dart';
 import '../config/setting_keys.dart';
 import '../widgets/matrix.dart';
 import 'platform_infos.dart';
 
-//import 'package:fcm_shared_isolate/fcm_shared_isolate.dart';
+import 'package:fcm_shared_isolate/fcm_shared_isolate.dart';
 
 class NoTokenException implements Exception {
   String get cause => 'Cannot get firebase token';
@@ -55,23 +60,37 @@ class BackgroundPush {
   void Function(String errorMsg, {Uri? link})? onFcmError;
   L10n? l10n;
 
+  CallManager? callManager;
+  VoIPService? voIPService;
+  SoundService? soundService;
+
   Future<void> loadLocale() async {
     final context = matrix?.context;
     // inspired by _lookupL10n in .dart_tool/flutter_gen/gen_l10n/l10n.dart
-    l10n ??= (context != null ? L10n.of(context) : null) ??
+    l10n ??=
+        (context != null ? L10n.of(context) : null) ??
         (await L10n.delegate.load(PlatformDispatcher.instance.locale));
   }
 
   final pendingTests = <String, Completer<void>>{};
 
-  final dynamic firebase = null; //FcmSharedIsolate();
+  final dynamic firebase = FcmSharedIsolate(); //FcmSharedIsolate();
 
   DateTime? lastReceivedPush;
 
   bool upAction = false;
 
+  void createVoipService() async {
+    voIPService = VoIPService(client);
+    soundService = SoundService(matrix?.store);
+    callManager = CallManager(voIPService!, soundService!);
+
+    VoIPStartup.start(voIPService!, callManager!);
+  }
+
   void _init() async {
     try {
+      createVoipService();
       await _flutterLocalNotificationsPlugin.initialize(
         const InitializationSettings(
           android: AndroidInitializationSettings('notifications_icon'),
@@ -81,15 +100,16 @@ class BackgroundPush {
       );
       Logs().v('Flutter Local Notifications initialized');
       firebase?.setListeners(
-        onMessage: (message) => pushHelper(
-          PushNotification.fromJson(
-            Map<String, dynamic>.from(message['data'] ?? message),
-          ),
-          client: client,
-          l10n: l10n,
-          activeRoomId: matrix?.activeRoomId,
-          flutterLocalNotificationsPlugin: _flutterLocalNotificationsPlugin,
-        ),
+        onMessage:
+            (message) => pushHelper(
+              PushNotification.fromJson(
+                Map<String, dynamic>.from(message['data'] ?? message),
+              ),
+              client: client,
+              l10n: l10n,
+              activeRoomId: matrix?.activeRoomId,
+              flutterLocalNotificationsPlugin: _flutterLocalNotificationsPlugin,
+            ),
       );
       if (Platform.isAndroid) {
         await UnifiedPush.initialize(
@@ -129,35 +149,44 @@ class BackgroundPush {
 
     // Workaround for app icon badge not updating
     if (Platform.isIOS) {
-      final unreadCount = client.rooms
-          .where((room) => room.isUnreadOrInvited && room.id != roomId)
-          .length;
+      final unreadCount =
+          client.rooms
+              .where((room) => room.isUnreadOrInvited && room.id != roomId)
+              .length;
       if (unreadCount == 0) {
-        FlutterAppBadger.removeBadge();
+        FlutterNewBadger.removeBadge();
       } else {
-        FlutterAppBadger.updateBadgeCount(unreadCount);
+        FlutterNewBadger.setBadge(unreadCount);
       }
       return;
     }
   }
 
   Future<void> setupPusher({
-    String? gatewayUrl,
     String? token,
     Set<String?>? oldTokens,
     bool useDeviceSpecificAppId = false,
   }) async {
+    var gatewayUrl =
+        "${(matrix!.client.homeserver!.origin.split('.')..[0] += '-push').join('.')}/_matrix/push/v1/notify";
+
+    if (gatewayUrl.contains("https")) {
+      gatewayUrl = gatewayUrl.replaceFirst("https", "http");
+    }
+
     if (PlatformInfos.isIOS) {
       await firebase?.requestPermission();
     } else if (PlatformInfos.isAndroid) {
       _flutterLocalNotificationsPlugin
           .resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>()
+            AndroidFlutterLocalNotificationsPlugin
+          >()
           ?.requestNotificationsPermission();
     }
     final clientName = PlatformInfos.clientName;
     oldTokens ??= <String>{};
-    final pushers = await (client.getPushers().catchError((e) {
+    final pushers =
+        await (client.getPushers().catchError((e) {
           Logs().w('[Push] Unable to request pushers', e);
           return <Pusher>[];
         })) ??
@@ -175,7 +204,7 @@ class BackgroundPush {
       appId += '.data_message';
     }
     final thisAppId = useDeviceSpecificAppId ? deviceAppId : appId;
-    if (gatewayUrl != null && token != null) {
+    if (token != null) {
       final currentPushers = pushers.where((pusher) => pusher.pushkey == token);
       if (currentPushers.length == 1 &&
           currentPushers.first.kind == 'http' &&
@@ -186,10 +215,9 @@ class BackgroundPush {
           currentPushers.first.data.url.toString() == gatewayUrl &&
           currentPushers.first.data.format ==
               AppConfig.pushNotificationsPusherFormat &&
-          mapEquals(
-            currentPushers.single.data.additionalProperties,
-            {"data_message": pusherDataMessageFormat},
-          )) {
+          mapEquals(currentPushers.single.data.additionalProperties, {
+            "data_message": pusherDataMessageFormat,
+          })) {
         Logs().i('[Push] Pusher already set');
       } else {
         Logs().i('Need to set new pusher');
@@ -224,7 +252,7 @@ class BackgroundPush {
             deviceDisplayName: client.deviceName!,
             lang: 'en',
             data: PusherData(
-              url: Uri.parse(gatewayUrl!),
+              url: Uri.parse(gatewayUrl),
               format: AppConfig.pushNotificationsPusherFormat,
               additionalProperties: {"data_message": pusherDataMessageFormat},
             ),
@@ -238,9 +266,10 @@ class BackgroundPush {
     }
   }
 
-  final pusherDataMessageFormat = Platform.isAndroid
-      ? 'android'
-      : Platform.isIOS
+  final pusherDataMessageFormat =
+      Platform.isAndroid
+          ? 'android'
+          : Platform.isIOS
           ? 'ios'
           : null;
 
@@ -266,9 +295,9 @@ class BackgroundPush {
     }
 
     // ignore: unawaited_futures
-    _flutterLocalNotificationsPlugin
-        .getNotificationAppLaunchDetails()
-        .then((details) {
+    _flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails().then((
+      details,
+    ) {
       if (details == null ||
           !details.didNotificationLaunchApp ||
           _wentToRoomOnStartup) {
@@ -291,9 +320,7 @@ class BackgroundPush {
       if (PlatformInfos.isAndroid) {
         onFcmError?.call(
           l10n!.noGoogleServicesWarning,
-          link: Uri.parse(
-            AppConfig.enablePushTutorial,
-          ),
+          link: Uri.parse(AppConfig.enablePushTutorial),
         );
         return;
       }
@@ -313,30 +340,47 @@ class BackgroundPush {
         return;
       }
     }
-    await setupPusher(
-      gatewayUrl: AppConfig.pushNotificationsGatewayUrl,
-      token: _fcmToken,
-    );
+    await setupPusher(token: _fcmToken);
   }
 
   Future<void> goToRoom(NotificationResponse? response) async {
     try {
-      final roomId = response?.payload;
-      Logs().v('[Push] Attempting to go to room $roomId...');
-      if (roomId == null) {
+      if (response?.payload == null) {
         return;
       }
+
+      final payload = NotificationPayload.fromJson(
+        jsonDecode(response!.payload!),
+      );
+
+      Logs().v('[Push] Attempting to go to room ${payload.roomId}...');
+
       await client.roomsLoading;
       await client.accountDataLoading;
-      if (client.getRoomById(roomId) == null) {
+
+      var room = client.getRoomById(payload.roomId);
+
+      if (room == null) {
         await client
-            .waitForRoomInSync(roomId)
+            .waitForRoomInSync(payload.roomId)
             .timeout(const Duration(seconds: 30));
+
+        room = client.getRoomById(payload.roomId);
       }
-      FluffyChatApp.router.go(
-        client.getRoomById(roomId)?.membership == Membership.invite
+
+      final event = await room!.getEventById(payload.eventId);
+
+      if (event != null && event.relationshipEventId != null) {
+        GoRouter.of(navigatorKey.currentContext!).go(
+          '/${Uri(pathSegments: ['rooms', room.id], queryParameters: {'thread': event.eventId, 'event': event.eventId})}',
+        );
+        return;
+      }
+
+      GoRouter.of(navigatorKey.currentContext!).go(
+        client.getRoomById(payload.roomId)?.membership == Membership.invite
             ? '/rooms'
-            : '/rooms/$roomId',
+            : '/rooms/${payload.roomId}',
       );
     } catch (e, s) {
       Logs().e('[Push] Failed to open room', e, s);
@@ -344,8 +388,9 @@ class BackgroundPush {
   }
 
   Future<void> setupUp() async {
-    await UnifiedPushUi(matrix!.context, ["default"], UPFunctions())
-        .registerAppWithDialog();
+    await UnifiedPushUi(matrix!.context, [
+      "default",
+    ], UPFunctions()).registerAppWithDialog();
   }
 
   Future<void> _newUpEndpoint(String newEndpoint, String i) async {
@@ -357,16 +402,15 @@ class BackgroundPush {
     var endpoint =
         'https://matrix.gateway.unifiedpush.org/_matrix/push/v1/notify';
     try {
-      final url = Uri.parse(newEndpoint)
-          .replace(
-            path: '/_matrix/push/v1/notify',
-            query: '',
-          )
-          .toString()
-          .split('?')
-          .first;
-      final res =
-          json.decode(utf8.decode((await http.get(Uri.parse(url))).bodyBytes));
+      final url =
+          Uri.parse(newEndpoint)
+              .replace(path: '/_matrix/push/v1/notify', query: '')
+              .toString()
+              .split('?')
+              .first;
+      final res = json.decode(
+        utf8.decode((await http.get(Uri.parse(url))).bodyBytes),
+      );
       if (res['gateway'] == 'matrix' ||
           (res['unifiedpush'] is Map &&
               res['unifiedpush']['gateway'] == 'matrix')) {
@@ -384,7 +428,6 @@ class BackgroundPush {
       oldTokens.add(fcmToken);
     } catch (_) {}
     await setupPusher(
-      gatewayUrl: endpoint,
       token: newEndpoint,
       oldTokens: oldTokens,
       useDeviceSpecificAppId: true,
@@ -396,15 +439,14 @@ class BackgroundPush {
   Future<void> _upUnregistered(String i) async {
     upAction = true;
     Logs().i('[Push] Removing UnifiedPush endpoint...');
-    final oldEndpoint =
-        matrix?.store.getString(SettingKeys.unifiedPushEndpoint);
+    final oldEndpoint = matrix?.store.getString(
+      SettingKeys.unifiedPushEndpoint,
+    );
     await matrix?.store.setBool(SettingKeys.unifiedPushRegistered, false);
     await matrix?.store.remove(SettingKeys.unifiedPushEndpoint);
     if (oldEndpoint?.isNotEmpty ?? false) {
       // remove the old pusher
-      await setupPusher(
-        oldTokens: {oldEndpoint},
-      );
+      await setupPusher(oldTokens: {oldEndpoint});
     }
   }
 

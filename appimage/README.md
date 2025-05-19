@@ -1,6 +1,6 @@
-# FluffyChat AppImage
+# CloudChat AppImage
 
-FluffyChat is provided as AppImage too. To Download, visit fluffychat.im.
+CloudChat is provided as AppImage too. To Download, visit cloudchat.im.
 
 ## Building
 
@@ -10,15 +10,15 @@ FluffyChat is provided as AppImage too. To Download, visit fluffychat.im.
 flutter build linux
 
 # copy binaries to appimage dir
-cp -r build/linux/{x64,arm64}/release/bundle appimage/FluffyChat.AppDir
+cp -r build/linux/{x64,arm64}/release/bundle appimage/CloudChat.AppDir
 cd appimage
 
 # prepare AppImage files
-cp FluffyChat.desktop FluffyChat.AppDir/
-mkdir -p FluffyChat.AppDir/usr/share/icons
-cp ../assets/logo.svg FluffyChat.AppDir/fluffychat.svg
-cp AppRun FluffyChat.AppDir
+cp CloudChat.desktop CloudChat.AppDir/
+mkdir -p CloudChat.AppDir/usr/share/icons
+cp ../assets/logo.svg CloudChat.AppDir/cloudchat.svg
+cp AppRun CloudChat.AppDir
 
 # build the AppImage
-appimagetool FluffyChat.AppDir
+appimagetool CloudChat.AppDir
 ```

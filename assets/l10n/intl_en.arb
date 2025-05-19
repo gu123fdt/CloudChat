@@ -882,8 +882,8 @@
     "type": "text",
     "placeholders": {}
   },
-  "fluffychat": "FluffyChat",
-  "@fluffychat": {
+  "cloudchat": "CloudChat",
+  "@cloudchat": {
     "type": "text",
     "placeholders": {}
   },
@@ -1057,7 +1057,7 @@
     "type": "text",
     "placeholders": {}
   },
-  "inviteText": "{username} invited you to FluffyChat.\n1. Visit fluffychat.im and install the app \n2. Sign up or sign in \n3. Open the invite link: \n {link}",
+  "inviteText": "{username} invited you to CloudChat.\n1. Visit cloudchat.im and install the app \n2. Sign up or sign in \n3. Open the invite link: \n {link}",
   "@inviteText": {
     "type": "text",
     "placeholders": {
@@ -1183,6 +1183,13 @@
       "homeserver": {}
     }
   },
+  "registerTo": "Register to {homeserver}",
+  "@registerTo": {
+    "type": "text",
+    "placeholders": {
+      "homeserver": {}
+    }
+  },
   "logout": "Logout",
   "@logout": {
     "type": "text",
@@ -1225,8 +1232,8 @@
     "type": "text",
     "placeholders": {}
   },
-  "newMessageInFluffyChat": "💬 New message in FluffyChat",
-  "@newMessageInFluffyChat": {
+  "newMessageInCloudChat": "💬 New message in CloudChat",
+  "@newMessageInCloudChat": {
     "type": "text",
     "placeholders": {}
   },
@@ -1474,7 +1481,7 @@
     "type": "text",
     "placeholders": {}
   },
-  "pleaseEnter4Digits": "Please enter 4 digits or leave empty to disable app lock.",
+  "pleaseEnter4Digits": "Please enter 4 digits.",
   "@pleaseEnter4Digits": {
     "type": "text",
     "placeholders": {}
@@ -1526,7 +1533,7 @@
     "type": "text",
     "placeholders": {}
   },
-  "redactedBy": "Redacted by {username}",
+  "redactedBy": "Deleted by {username}",
   "@redactedBy": {
     "type": "text",
     "placeholders": {
@@ -1535,7 +1542,7 @@
   },
   "directChat": "Direct chat",
   "@directChat": {},
-  "redactedByBecause": "Redacted by {username} because: \"{reason}\"",
+  "redactedByBecause": "Deleted by {username} because: \"{reason}\"",
   "@redactedByBecause": {
     "type": "text",
     "placeholders": {
@@ -1896,7 +1903,7 @@
     "type": "text",
     "placeholders": {}
   },
-  "title": "FluffyChat",
+  "title": "CloudChat",
   "@title": {
     "description": "Title for the application",
     "type": "text",
@@ -2229,7 +2236,7 @@
   "@emailOrUsername": {},
   "indexedDbErrorTitle": "Private mode issues",
   "@indexedDbErrorTitle": {},
-  "indexedDbErrorLong": "The message storage is unfortunately not enabled in private mode by default.\nPlease visit\n - about:config\n - set dom.indexedDB.privateBrowsing.enabled to true\nOtherwise, it is not possible to run FluffyChat.",
+  "indexedDbErrorLong": "The message storage is unfortunately not enabled in private mode by default.\nPlease visit\n - about:config\n - set dom.indexedDB.privateBrowsing.enabled to true\nOtherwise, it is not possible to run CloudChat.",
   "@indexedDbErrorLong": {},
   "switchToAccount": "Switch to account {number}",
   "@switchToAccount": {
@@ -2374,13 +2381,13 @@
   "@callingPermissions": {},
   "callingAccount": "Calling account",
   "@callingAccount": {},
-  "callingAccountDetails": "Allows FluffyChat to use the native android dialer app.",
+  "callingAccountDetails": "Allows CloudChat to use the native android dialer app.",
   "@callingAccountDetails": {},
   "appearOnTop": "Appear on top",
   "@appearOnTop": {},
-  "appearOnTopDetails": "Allows the app to appear on top (not needed if you already have Fluffychat setup as a calling account)",
+  "appearOnTopDetails": "Allows the app to appear on top (not needed if you already have Cloudchat setup as a calling account)",
   "@appearOnTopDetails": {},
-  "otherCallingPermissions": "Microphone, camera and other FluffyChat permissions",
+  "otherCallingPermissions": "Microphone, camera and other CloudChat permissions",
   "@otherCallingPermissions": {},
   "whyIsThisMessageEncrypted": "Why is this message unreadable?",
   "@whyIsThisMessageEncrypted": {},
@@ -2477,14 +2484,21 @@
   "@setColorTheme": {},
   "invite": "Invite",
   "@invite": {},
-  "inviteGroupChat": "📨 Invite group chat",
+  "inviteGroupChat": "📨 You have been invited to a group chat",
   "@inviteGroupChat": {},
-  "invitePrivateChat": "📨 Invite private chat",
+  "invitePrivateChat": "📨 You have been invited to a private chat",
   "@invitePrivateChat": {},
   "invalidInput": "Invalid input!",
   "@invalidInput": {},
   "wrongPinEntered": "Wrong pin entered! Try again in {seconds} seconds...",
   "@wrongPinEntered": {
+    "type": "text",
+    "placeholders": {
+      "seconds": {}
+    }
+  },
+  "wrongPasswordEntered": "Wrong password entered! Try again in {seconds} seconds...",
+  "@wrongPasswordEntered": {
     "type": "text",
     "placeholders": {
       "seconds": {}
@@ -2594,6 +2608,7 @@
     }
   },
   "searchIn": "Search in chat \"{chat}\"...",
+  "searchInGlobal": "Search in all chats...",
   "@searchIn": {
     "type": "text",
     "placeholders": {
@@ -2800,7 +2815,7 @@
   "oneOfYourDevicesIsNotVerified": "One of your devices is not verified",
   "noticeChatBackupDeviceVerification": "Note: When you connect all your devices to the chat backup, they are automatically verified.",
   "continueText": "Continue",
-  "welcomeText": "Hey Hey 👋 This is FluffyChat. You can sign in to any homeserver, which is compatible with https://matrix.org. And then chat with anyone. It's a huge decentralized messaging network!",
+  "welcomeText": "Hey Hey 👋 This is CloudChat. You can sign in to any homeserver, which is compatible with https://matrix.org. And then chat with anyone. It's a huge decentralized messaging network!",
   "blur": "Blur:",
   "opacity": "Opacity:",
   "setWallpaper": "Set wallpaper",
@@ -2820,5 +2835,95 @@
   "pleaseFillOut": "Please fill out",
   "invalidUrl": "Invalid url",
   "addLink": "Add link",
-  "unableToJoinChat": "Unable to join chat. Maybe the other party has already closed the conversation."
+  "unableToJoinChat": "Unable to join chat. Maybe the other party has already closed the conversation.",
+  "thread": "Thread",
+  "startThread": "Start thread",
+  "toThread": "Go to thread",
+  "countAnswers": "{count} answers",
+  "globalSearchMessages": "Global message search",
+  "@countAnswers": {
+    "type": "text",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "jitsiCall": "Create Jitsi room",
+  "editJitsiroom": "Edit Jitsi room",
+  "roomName": "Room name",
+  "searchUsers": "Search users",
+  "selectedOf": "Selected {selected} of {of}",
+  "@selectedOf": {
+    "type": "text",
+    "placeholders": {
+      "selected": {},
+      "of": {}
+    }
+  },
+  "joinToMeeting": "Join to meeting",
+  "inputDevice": "Input device",
+  "outputDevice": "Output device",
+  "pinned": "Pinned",
+  "newChatVersionAvailable": "A new version of chat is available, click to install",
+  "email": "Email",
+  "usernameAlreadyExists": "A user with the same username already exists",
+  "usernameIsUnsuitable": "It is impossible to create a user with this username",
+  "pleaseEnterYourEmail": "Please enter your email",
+  "emailIsNotCorrect": "Email is not in the correct",
+  "emailAlreadyExists": "There is already an account at this email address",
+  "emailConfirmations": "An email has been sent to your inbox. After confirming it, you will automatically be logged into your account. If you leave this page, you will have to restart the registration process.",
+  "threads": "Threads",
+  "threadsCount": "{count} threads",
+  "@threadsCount": {
+    "type": "text",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "threadsFrom": "All threads from '{roomName}'",
+  "@threadsFrom": {
+    "type": "text",
+    "placeholders": {
+      "roomName": {}
+    }
+  },
+  "moreUsers": "... more {count} users.",
+  "@moreUsers": {
+    "type": "text",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "autoStart": "Auto-start application",
+  "pleaseChooseALockMethod": "Please choose a lock method",
+  "pleaseEnterPassword": "Please enter app lock password",
+  "passwordMustBeAtLeast6Characters": "Password must be at least 6 characters",
+  "appLockTimeout": "App lock timeout",
+  "appLockTimeoutDescription": "Lock application after period of inactivity",
+  "pleaseChooseALockTimeout": "Please choose a lock timeout",
+  "minutes": "{count} minutes",
+  "@minutes": {
+    "type": "text",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "never": "Never",
+  "hours": "{count} hours",
+  "@hours": {
+    "type": "text",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "confirmPassword": "Confirm password",
+  "confirmPin": "Confirm PIN",
+  "pinSetSuccessfully": "PIN-code successfully set",
+  "passwordSetSuccessfully": "Password successfully set",
+  "removePassword": "Remove password",
+  "removePasswordSuccessfully": "Password removed successfully",
+  "createLink": "Create message link",
+  "copySuccessfully": "Link copied successfully",
+  "openTextEditor": "Open text editor",
+  "inviteAllUsersToGroup": "Invite all users to the group",
+  "tryDecipherMessages": "Try to decipher the message"
 }

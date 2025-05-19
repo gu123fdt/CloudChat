@@ -3,10 +3,12 @@ import 'package:matrix/matrix.dart';
 import '../../config/app_config.dart';
 
 extension VisibleInGuiExtension on List<Event> {
-  List<Event> filterByVisibleInGui({String? exceptionEventId}) {
-    final visibleEvents =
-        where((e) => e.isVisibleInGui || e.eventId == exceptionEventId)
-            .toList();
+  List<Event> filterByVisibleInGui(
+      {String? exceptionEventId, String? exceptionRelationshipEventId,}) {
+    final visibleEvents = where((e) =>
+        e.isVisibleInGui ||
+        e.eventId == exceptionEventId ||
+        e.relationshipEventId == exceptionRelationshipEventId,).toList();
 
     // Hide creation state events:
     if (visibleEvents.isNotEmpty &&

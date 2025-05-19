@@ -2,18 +2,21 @@ import 'dart:async';
 
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
-import 'package:fluffychat/widgets/fluffy_chat_app.dart';
-import 'package:fluffychat/widgets/matrix.dart';
+import 'package:cloudchat/widgets/cloud_chat_app.dart';
+import 'package:cloudchat/widgets/matrix.dart';
 
 extension UiaRequestManager on MatrixState {
   Future uiaRequestHandler(UiaRequest uiaRequest) async {
     final l10n = L10n.of(context);
-    final navigatorContext =
-        FluffyChatApp.router.routerDelegate.navigatorKey.currentContext ??
-            context;
+    final navigatorContext = GoRouter.of(navigatorKey.currentContext!)
+            .routerDelegate
+            .navigatorKey
+            .currentContext ??
+        context;
     try {
       if (uiaRequest.state != UiaRequestState.waitForUser ||
           uiaRequest.nextStages.isEmpty) {

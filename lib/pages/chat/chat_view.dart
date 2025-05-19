@@ -5,25 +5,28 @@ import 'package:flutter/material.dart';
 import 'package:badges/badges.dart';
 import 'package:desktop_drop/desktop_drop.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:go_router/go_router.dart';
+import 'package:cloudchat/pages/chat/edit_text_style.dart';
+import 'package:cloudchat/pages/chat/md_editor.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/config/themes.dart';
-import 'package:fluffychat/pages/chat/chat.dart';
-import 'package:fluffychat/pages/chat/chat_app_bar_list_tile.dart';
-import 'package:fluffychat/pages/chat/chat_app_bar_title.dart';
-import 'package:fluffychat/pages/chat/chat_event_list.dart';
-import 'package:fluffychat/pages/chat/encryption_button.dart';
-import 'package:fluffychat/pages/chat/pinned_events.dart';
-import 'package:fluffychat/pages/chat/reactions_picker.dart';
-import 'package:fluffychat/pages/chat/reply_display.dart';
-import 'package:fluffychat/utils/account_config.dart';
-import 'package:fluffychat/utils/localized_exception_extension.dart';
-import 'package:fluffychat/widgets/chat_settings_popup_menu.dart';
-import 'package:fluffychat/widgets/connection_status_header.dart';
-import 'package:fluffychat/widgets/future_loading_dialog.dart';
-import 'package:fluffychat/widgets/matrix.dart';
-import 'package:fluffychat/widgets/mxc_image.dart';
-import 'package:fluffychat/widgets/unread_rooms_badge.dart';
+import 'package:cloudchat/config/themes.dart';
+import 'package:cloudchat/pages/chat/chat.dart';
+import 'package:cloudchat/pages/chat/chat_app_bar_list_tile.dart';
+import 'package:cloudchat/pages/chat/chat_app_bar_title.dart';
+import 'package:cloudchat/pages/chat/chat_event_list.dart';
+import 'package:cloudchat/pages/chat/encryption_button.dart';
+import 'package:cloudchat/pages/chat/pinned_events.dart';
+import 'package:cloudchat/pages/chat/reactions_picker.dart';
+import 'package:cloudchat/pages/chat/reply_display.dart';
+import 'package:cloudchat/utils/account_config.dart';
+import 'package:cloudchat/utils/localized_exception_extension.dart';
+import 'package:cloudchat/widgets/chat_settings_popup_menu.dart';
+import 'package:cloudchat/widgets/connection_status_header.dart';
+import 'package:cloudchat/widgets/future_loading_dialog.dart';
+import 'package:cloudchat/widgets/matrix.dart';
+import 'package:cloudchat/widgets/mxc_image.dart';
+import 'package:cloudchat/widgets/unread_rooms_badge.dart';
 import '../../utils/stream_extension.dart';
 import 'chat_emoji_picker.dart';
 import 'chat_input_row.dart';
@@ -38,6 +41,13 @@ class ChatView extends StatelessWidget {
   List<Widget> _appBarActions(BuildContext context) {
     if (controller.selectMode) {
       return [
+        if (controller.canStartThread)
+          IconButton(
+            icon: const Icon(Icons.fork_right_outlined),
+            tooltip: L10n.of(context).startThread,
+            onPressed: () =>
+                controller.startThread(controller.selectedEvents[0]),
+          ),
         if (controller.canEditSelectedEvents)
           IconButton(
             icon: const Icon(Icons.edit_outlined),
@@ -113,10 +123,9 @@ class ChatView extends StatelessWidget {
             ],
           ),
       ];
-    } else if (!controller.room.isArchived) {
+    } else if (!controller.room.isArchived && !controller.isThread()) {
       return [
-        if (Matrix.of(context).voipPlugin != null &&
-            controller.room.isDirectChat)
+        if (Matrix.of(context).voIPService != null)
           IconButton(
             onPressed: controller.onPhoneButtonTap,
             icon: const Icon(Icons.call_outlined),
@@ -139,7 +148,7 @@ class ChatView extends StatelessWidget {
         exceptionContext: ExceptionContext.joinRoom,
       );
     }
-    final bottomSheetPadding = FluffyThemes.isColumnMode(context) ? 16.0 : 8.0;
+    final bottomSheetPadding = CloudThemes.isColumnMode(context) ? 16.0 : 8.0;
     final scrollUpBannerEventId = controller.scrollUpBannerEventId;
 
     final accountConfig = Matrix.of(context).client.applicationAccountConfig;
@@ -187,18 +196,34 @@ class ChatView extends StatelessWidget {
                         tooltip: L10n.of(context).close,
                         color: theme.colorScheme.primary,
                       )
-                    : StreamBuilder<Object>(
-                        stream: Matrix.of(context)
-                            .client
-                            .onSync
-                            .stream
-                            .where((syncUpdate) => syncUpdate.hasRoomUpdate),
-                        builder: (context, _) => UnreadRoomsBadge(
-                          filter: (r) => r.id != controller.roomId,
-                          badgePosition: BadgePosition.topEnd(end: 8, top: 4),
-                          child: const Center(child: BackButton()),
-                        ),
-                      ),
+                    : controller.isThread()
+                        ? IconButton(
+                            icon: const Icon(Icons.close),
+                            onPressed: controller.closeThread,
+                            tooltip: L10n.of(context).close,
+                            color: theme.colorScheme.primary,
+                          )
+                        : StreamBuilder<Object>(
+                            stream:
+                                Matrix.of(context).client.onSync.stream.where(
+                                      (syncUpdate) => syncUpdate.hasRoomUpdate,
+                                    ),
+                            builder: (context, _) => UnreadRoomsBadge(
+                              filter: (r) => r.id != controller.roomId,
+                              badgePosition:
+                                  BadgePosition.topEnd(end: 8, top: 4),
+                              child: Center(
+                                child: BackButton(
+                                  onPressed: controller.widget.from != null
+                                      ? () {
+                                          GoRouter.of(context)
+                                              .go(controller.widget.from!);
+                                        }
+                                      : null,
+                                ),
+                              ),
+                            ),
+                          ),
                 titleSpacing: 0,
                 title: ChatAppBarTitle(controller),
                 actions: _appBarActions(context),
@@ -301,11 +326,11 @@ class ChatView extends StatelessWidget {
                                 right: bottomSheetPadding,
                               ),
                               constraints: const BoxConstraints(
-                                maxWidth: FluffyThemes.columnWidth * 2.5,
+                                maxWidth: CloudThemes.columnWidth * 2.5,
                               ),
                               alignment: Alignment.center,
                               child: Material(
-                                clipBehavior: Clip.hardEdge,
+                                clipBehavior: Clip.antiAliasWithSaveLayer,
                                 color: theme.colorScheme.surfaceContainerHigh,
                                 borderRadius: const BorderRadius.all(
                                   Radius.circular(24),
@@ -353,8 +378,10 @@ class ChatView extends StatelessWidget {
                                           const ConnectionStatusHeader(),
                                           ReactionsPicker(controller),
                                           ReplyDisplay(controller),
+                                          EditTextStyle(controller),
                                           ChatInputRow(controller),
                                           ChatEmojiPicker(controller),
+                                          MDEditor(controller),
                                         ],
                                       ),
                               ),

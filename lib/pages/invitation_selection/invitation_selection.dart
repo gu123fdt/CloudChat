@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/l10n.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:fluffychat/pages/invitation_selection/invitation_selection_view.dart';
-import 'package:fluffychat/widgets/future_loading_dialog.dart';
-import 'package:fluffychat/widgets/matrix.dart';
+import 'package:cloudchat/pages/invitation_selection/invitation_selection_view.dart';
+import 'package:cloudchat/widgets/future_loading_dialog.dart';
+import 'package:cloudchat/widgets/matrix.dart';
 import '../../utils/localized_exception_extension.dart';
 
 class InvitationSelection extends StatefulWidget {
@@ -30,6 +30,8 @@ class InvitationSelectionController extends State<InvitationSelection> {
   Timer? coolDown;
 
   String? get roomId => widget.roomId;
+
+  bool isMassSearchUsers = false;
 
   Future<List<User>> getContacts(BuildContext context) async {
     final client = Matrix.of(context).client;
@@ -69,12 +71,39 @@ class InvitationSelectionController extends State<InvitationSelection> {
     }
   }
 
+  void inviteAllAction() async {
+    final success = await showFutureLoadingDialog(
+      context: context,
+      future: () => _inviteAll(),
+    );
+
+    if (success.error == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(L10n.of(context).contactHasBeenInvitedToTheGroup),
+        ),
+      );
+    }
+  }
+
+  Future<void> _inviteAll() async {
+    final room = Matrix.of(context).client.getRoomById(roomId!)!;
+
+    for (final profile in foundProfiles) {
+      await room.invite(profile.userId);
+    }
+  }
+
   void searchUserWithCoolDown(String text) async {
     coolDown?.cancel();
     coolDown = Timer(
       const Duration(milliseconds: 500),
       () => searchUser(context, text),
     );
+
+    setState(() {
+      isMassSearchUsers = text.contains(",");
+    });
   }
 
   void searchUser(BuildContext context, String text) async {
@@ -87,6 +116,31 @@ class InvitationSelectionController extends State<InvitationSelection> {
     if (loading) return;
     setState(() => loading = true);
     final matrix = Matrix.of(context);
+
+    if (currentSearchTerm.contains(",")) {
+      final usersId =
+          currentSearchTerm.replaceAll(" ", "").split(",").toSet().toList();
+      var users = <Profile>[];
+
+      for (final userId in usersId) {
+        try {
+          final response =
+              await matrix.client.searchUserDirectory(userId, limit: 1);
+
+          users.add(response.results.first);
+        } catch (_) {}
+      }
+
+      users = users.toSet().toList();
+
+      setState(() {
+        setState(() => loading = false);
+        foundProfiles = List<Profile>.from(users);
+      });
+
+      return;
+    }
+
     SearchUserDirectoryResponse response;
     try {
       response = await matrix.client.searchUserDirectory(text, limit: 10);
@@ -100,14 +154,14 @@ class InvitationSelectionController extends State<InvitationSelection> {
     }
     setState(() {
       foundProfiles = List<Profile>.from(response.results);
-      if (text.isValidMatrixId &&
+      /*if (text.isValidMatrixId &&
           foundProfiles.indexWhere((profile) => text == profile.userId) == -1) {
         setState(
           () => foundProfiles = [
             Profile.fromJson({'user_id': text}),
           ],
         );
-      }
+      }*/
     });
   }
 

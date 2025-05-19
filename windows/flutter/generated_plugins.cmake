@@ -3,20 +3,30 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  app_links
+  audioplayers_windows
   desktop_drop
+  desktop_webview_window
   dynamic_color
   emoji_picker_flutter
   file_selector_windows
+  firebase_core
   flutter_secure_storage_windows
   flutter_webrtc
-  geolocator_windows
+  just_audio_windows
+  local_notifier
   pasteboard
   permission_handler_windows
   record_windows
+  screen_retriever_windows
   share_plus
   sqlcipher_flutter_libs
+  tray_manager
   url_launcher_windows
+  window_manager
   window_to_front
+  windows_single_instance
+  windows_taskbar
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST
